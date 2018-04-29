@@ -5,6 +5,16 @@ from pygame import *
 rec = ((1200, 800))
 screen = display.set_mode(rec)
 screen.fill((255, 255, 255))
+#------------------------------------------------
+font.init()
+init()
+Fontt = font.SysFont("Comic Sans MS", 20, False, False)
+correct = Fontt.render("Correct!", True, (0, 255, 0))
+incorrect = Fontt.render("Incorrect!", True, (255, 0, 0))
+TryToPronounceThisWord = Fontt.render("Try to pronounce this word.", True, (0,0,0))
+startRecording = Fontt.render("^PRESS to start recording.", True, (0,0,0))
+screen.blit(TryToPronounceThisWord, (400, 120))
+screen.blit(startRecording, (465, 442))
 #-----------------------------------------------
 blueArrowPic = image.load("blueArrow.png")
 screen.blit(blueArrowPic, (300, 150))
