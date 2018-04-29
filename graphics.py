@@ -13,9 +13,11 @@ screen.blit(micPic, (530, 300))
 #-----------------------------------------------
 micRect = Rect(530, 300, 140, 140)
 txtRect = Rect(400, 150, 400, 100)
-statusRect = Rect(500, 600, 200, 50)
+correctRect = Rect(500, 600, 200, 50)
+statusRect = Rect(400, 480, 400, 80)
 draw.rect(screen, (0), micRect, 2)
 draw.rect(screen, (0), txtRect, 2)
+draw.rect(screen, (0), correctRect, 2)
 draw.rect(screen, (0), statusRect, 2)
 #-----------------------------------------------
 running=True
