@@ -52,6 +52,7 @@ definitions =["hi","hello","bye", "My name is", "How are you"]
 
 
 running=True
+    
 while running:
     screen.fill((255,255,255))
     a = randint(0,4)
@@ -68,10 +69,11 @@ while running:
     statusRect = Rect(400, 480, 400, 80)
     draw.rect(screen, (0), micRect, 2)
     draw.rect(screen, (0), txtRect, 2)
-    #draw.rect(screen, (0), correctRect, 2)
+    draw.rect(screen, (255,255,255), correctRect, 2)
     draw.rect(screen, (0), statusRect, 2)
     txtPic = fnt.render(words[a],True,(0,0,0))
     screen.blit(txtPic,(400,150))
+    incorrectRect = Rect(500, 600, 200, 50)
 
     while running:
         recording = False
@@ -97,10 +99,18 @@ while running:
                 screen.blit(spokentext, (400,465))
                 if string == words[a]:
                     screen.blit(correct, (500, 600))
+                    display.flip()
+                    time.sleep(2)
+                    draw.rect(screen, (255,255,255), incorrectRect)
                     break
                 else:
                     screen.blit(incorrect, (500, 600))
-                
+                    display.flip()
+                    time.sleep(2)
+                    draw.rect(screen, (255,255,255), statusRect)
+                    draw.rect(screen, (0,0,0), statusRect, 2)
+                    draw.rect(screen, (255,255,255), incorrectRect)
+                                        
             else:
                 recording = False
                 draw.rect(screen, (255,255,255), (465,442, 303, 30))
