@@ -1,9 +1,11 @@
 #Graphics
 #-----------------------------------------------
 from pygame import *
+from random import *
+import speech_recognition as sr
+import time
 #-----------------------------------------------
-rec = ((1200, 800))
-screen = display.set_mode(rec)
+screen = display.set_mode((1200,800))
 screen.fill((255, 255, 255))
 #------------------------------------------------
 font.init()
@@ -12,42 +14,103 @@ Fontt = font.SysFont("Comic Sans MS", 20, False, False)
 smallfont = font.SysFont("Comic Sans MS", 15, False, False)
 correct = Fontt.render("Correct!", True, (0, 255, 0))
 incorrect = Fontt.render("Incorrect!", True, (255, 0, 0))
-TryToPronounceThisWord = Fontt.render("Try to pronounce this word.", True, (0,0,0))
-startRecording = Fontt.render("^PRESS to start recording.", True, (0,0,0))
-couldNotUnderstand = smallfont.render("Google Speech Recognition could not understand audio.", True, (0,0,0))
-screen.blit(TryToPronounceThisWord, (400, 120))
-screen.blit(startRecording, (465, 442))
-#-----------------------------------------------
+Pronounce= Fontt.render("Try to pronounce this word.", True, (0,0,0))
+startRecording = Fontt.render("^CLICK to start recording.", True, (0,0,0))
+NoUnderstand = smallfont.render("Google Speech Recognition could not understand audio.", True, (0,0,0))
+
 blueArrowPic = image.load("blueArrow.png")
-screen.blit(blueArrowPic, (300, 150))
+    
 micPic = image.load("micPic.jpg")
-screen.blit(micPic, (530, 300))
+    
+#------------------------------------------------------
+def record():
+    r = sr.Recognizer()
+    with sr.Microphone() as source:
+        display.flip()
+        audio = r.listen(source)
+        
+    try:
+        # for testing purposes, we're just using the default API key
+        # to use another API key, use `r.recognize_google(audio, key="GOOGLE_SPEECH_RECOGNITION_API_KEY")`
+        # instead of `r.recognize_google(audio)`
+        string = r.recognize_google(audio, language = "ko").lower()
+        #print(type(splitData))
+        #string = " ".join(splitData)
+        #text = fnt.render(splitData[0], True, (0,0,0))
+        #verbal = screen.blit(text,(400, 465))
+        return string
+    except sr.UnknownValueError:
+        print("Google Speech Recognition could not understand audio")
+    except sr.RequestError as e:
+        print("Could not request results from Google Speech Recognition service; {0}".format(e))    
+    
+
 #-----------------------------------------------
-micRect = Rect(530, 300, 140, 140)
-txtRect = Rect(400, 150, 400, 100)
-correctRect = Rect(500, 600, 200, 50)
-statusRect = Rect(400, 480, 400, 80)
-draw.rect(screen, (0), micRect, 2)
-draw.rect(screen, (0), txtRect, 2)
-draw.rect(screen, (0), correctRect, 2)
-draw.rect(screen, (0), statusRect, 2)
-#-----------------------------------------------
+fnt = font.Font("cyberbit.ttf",60)
+words = ["안녕","여보세요","안녕","내 이름은","잘 지냈어요"]
+definitions =["hi","hello","bye", "My name is", "How are you"]
+
+
 running=True
 while running:
-    for e in event.get():
-        if e.type == QUIT:
-            running = False
-        if e.type == MOUSEBUTTONDOWN:
-            triPic = screen.copy()
-            if e.button == 1:
-               linePic = screen.copy()
-               lineStartx,lineStarty = e.pos
+    screen.fill((255,255,255))
+    a = randint(0,4)
+    screen.blit(Pronounce, (400, 120))
+    screen.blit(startRecording, (465, 442))
+    #----------------------------------------------
+    
+    screen.blit(blueArrowPic, (300, 150))
+    screen.blit(micPic, (530, 300))
+    #-----------------------------------------------
+    micRect = Rect(530, 300, 140, 140)
+    txtRect = Rect(400, 150, 400, 100)
+    correctRect = Rect(500, 600, 200, 50)
+    statusRect = Rect(400, 480, 400, 80)
+    draw.rect(screen, (0), micRect, 2)
+    draw.rect(screen, (0), txtRect, 2)
+    #draw.rect(screen, (0), correctRect, 2)
+    draw.rect(screen, (0), statusRect, 2)
+    txtPic = fnt.render(words[a],True,(0,0,0))
+    screen.blit(txtPic,(400,150))
 
-    mb = mouse.get_pressed()
-    mx, my = mouse.get_pos()
+    while running:
+        recording = False
+        for e in event.get():
+            if e.type == QUIT:
+                running = False
+            if e.type == MOUSEBUTTONDOWN:
+                click = True
+                if e.button == 1:
+                   linePic = screen.copy()
+                   lineStartx,lineStarty = e.pos
+
+        mb = mouse.get_pressed()
+        mx, my = mouse.get_pos()
+        if micRect.collidepoint(mx,my):
+            if mb[0] == 1:
+                recording = True  
+                draw.rect(screen, (255,255,255), (465,442, 303, 30))
+                recordnotif = Fontt.render("Recording...", True, (0,0,0))
+                screen.blit(recordnotif,(465,442))
+                string = record()
+                spokentext = fnt.render(string, True, (0,0,0))
+                screen.blit(spokentext, (400,465))
+                if string == words[a]:
+                    screen.blit(correct, (500, 600))
+                    break
+                else:
+                    screen.blit(incorrect, (500, 600))
+                
+            else:
+                recording = False
+                draw.rect(screen, (255,255,255), (465,442, 303, 30))
+                screen.blit(startRecording, (465, 442))
+            
+            
+        
 #-------------------------------------------------
     
 
 #--------------------------------------------------
-    display.flip()
+        display.flip()
 quit()
