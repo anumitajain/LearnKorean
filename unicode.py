@@ -8,6 +8,7 @@ fnt = font.Font("cyberbit.ttf",60)
 txtPic = fnt.render(easy,True,(255,255,255))
 screen.blit(txtPic,(100,100))
 
+running = True
 while running:
     for evnt in event.get():                
         if evnt.type == QUIT:
