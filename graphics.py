@@ -19,8 +19,9 @@ startRecording = Fontt.render("^CLICK to start recording.", True, (0,0,0))
 NoUnderstand = smallfont.render("Google Speech Recognition could not understand audio.", True, (0,0,0))
 
 blueArrowPic = image.load("blueArrow.png")
-    
+heartPic = image.load("heart.png")    
 micPic = image.load("micPic.jpg")
+gameOver = image.load("game over.png")
     
 #------------------------------------------------------
 def record():
@@ -67,6 +68,7 @@ while running:
     txtRect = Rect(400, 150, 400, 100)
     correctRect = Rect(500, 600, 200, 50)
     statusRect = Rect(400, 480, 400, 80)
+    heart = [880, 0, 0, 73]
     draw.rect(screen, (0), micRect, 2)
     draw.rect(screen, (0), txtRect, 2)
     draw.rect(screen, (255,255,255), correctRect, 2)
@@ -74,6 +76,10 @@ while running:
     txtPic = fnt.render(words[a],True,(0,0,0))
     screen.blit(txtPic,(400,150))
     incorrectRect = Rect(500, 600, 200, 50)
+    screen.blit(heartPic, (880, 0))
+    screen.blit(heartPic, (960, 0))
+    screen.blit(heartPic, (1040, 0))
+    screen.blit(heartPic, (1120, 0))
 
     while running:
         recording = False
@@ -104,13 +110,17 @@ while running:
                     draw.rect(screen, (255,255,255), incorrectRect)
                     break
                 else:
-                    screen.blit(incorrect, (500, 600))
-                    display.flip()
-                    time.sleep(2)
-                    draw.rect(screen, (255,255,255), statusRect)
-                    draw.rect(screen, (0,0,0), statusRect, 2)
-                    draw.rect(screen, (255,255,255), incorrectRect)
-                                        
+                    if heart[2] == 320:
+                        screen.blit(gameOver, (0, 0))
+                    else:
+                        screen.blit(incorrect, (500, 600))
+                        display.flip()
+                        time.sleep(2)
+                        draw.rect(screen, (255,255,255), statusRect)
+                        draw.rect(screen, (0,0,0), statusRect, 2)
+                        draw.rect(screen, (255,255,255), incorrectRect)
+                        heart[2]+=80
+                        draw.rect(screen, (255,255,255), heart)                                        
             else:
                 recording = False
                 draw.rect(screen, (255,255,255), (465,442, 303, 30))
