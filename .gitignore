@@ -1,0 +1,11 @@
+
+pocketsphinx/__init__.py
+pocketsphinx/__pycache__/__init__.cpython-36.pyc
+pocketsphinx/__pycache__/pocketsphinx.cpython-36.pyc
+pocketsphinx/_pocketsphinx.cp36-win_amd64.pyd
+pocketsphinx/data/goforward.raw
+pocketsphinx/model/cmudict-en-us.dict
+pocketsphinx/model/en-us.lm.bin
+pocketsphinx/model/en-us/feat.params
+pocketsphinx/model/en-us/mdef
+pocketsphinx/model/en-us/means
