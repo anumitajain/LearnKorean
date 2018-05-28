@@ -162,7 +162,9 @@ page = "menu"
 while page != "exit":
     if page == "menu":
         page = start()
-    if page == "beginner":
+    if page == "Beginner":
         page = beginner()
+    if page == "concentration":
+        page = concentration()
 
 quit()
