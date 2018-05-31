@@ -58,7 +58,7 @@ def record():
     
 
 #-----------------------------------------------
-fnt = font.Font("cyberbit.ttf",60)
+fnt = font.Font("cyberbit.ttf",60)    
 words = ["안녕","여보세요","내 이름은","잘 지냈어요"]
 definitions =["hi, bye","hello","My name is", "How are you"]
 running= True
@@ -138,4 +138,3 @@ while running:
 #--------------------------------------------------
     display.flip()
 quit()
-
