@@ -35,28 +35,27 @@ kwords = list(korean.keys())
 shuffle(kwords)
 print(kwords)
 ewords = list(kwords[:8])
-cardval = list(kwords[:8])
+kcardval = list(kwords[:8])
 shuffle(ewords)#must shuffle outside loop so words don't keep flashing
 
 title= ArialFont.render("Concentration", True, (255,0, 100))
 cardstop=[Rect(x*140+40, 200, 120, 175) for x in range(8)] #top row of cards
 cardsbot= [Rect(x*140+40, 475, 120, 175) for x in range(8)] #bottom row of cards
 
-
 kwordstate =[] #records all the word states.
-                   #Will only be used when changing the state
+               #Will only be used when changing the state
 ewordstate = []
 cardmodeT =[]
 cardmodeB = []
-for i in range(len(kwords)):
-    kwordstate.append([kwords[i],"covered"])
+for i in range(len(kcardval)):
+    kwordstate.append([kcardval[i],"covered"]) #because every word starts off covered
 for i in range(len(ewords)):
     ewordstate.append([ewords[i],"covered"]) #same list as kwordstate
 for i in range(len(cardstop)):
     cardmodeT.append([cardstop[i], "covered"])
     cardmodeB.append([cardsbot[i],"covered"])
     
-def draw(screen, kwordstate, ewordstate,topcards, bottomcards):
+def setup(screen, ewords, krdict, kwordstate, ewordstate,topcards, bottomcards):
     font.init()
     init()
     ArialFont = font.SysFont("Arial", 150, True, False)
@@ -76,55 +75,83 @@ def draw(screen, kwordstate, ewordstate,topcards, bottomcards):
         mx, my = mouse.get_pos()
         screen.fill((0,0,0))
 
+        screen.blit(title, (160, 9))
         
         c=0 
         for i in range(len(kwordstate)):
             if kwordstate[i][1] == "covered":
-                draw.rect(screen,(255,255,255), topcards[i])
-                draw.rect(screen,(255,255,255), bottomcards[i])
-                c += 1
+                print(topcards[i])
+                draw.rect(screen,(255,255,255), (topcards[i]))#.x,topcards[i].y,topcards[i].w,topcards[i].h))
+                c += 1 #means user hasn't won yet
             else:
-                if len(kwords[i][0])> 4: #special cases for diff len strings so spacing looks good
-                    txt = fnt3.render(kwords[i][0][:2], True, (0,0,0)) #so the text fits in the rectangle and looks pretty
-                    txt2 = fnt3.render(kwords[i][0][2:], True, (0,0,0))
+                if len(kwordstate[i][0])> 4: #special cases for diff len strings so spacing looks good
+                    txt = fnt3.render(kwordstate[i][0][:2], True, (0,0,0)) #so the text fits in the rectangle and looks pretty
+                    txt2 = fnt3.render(kwordstate[i][0][2:], True, (0,0,0))
                     screen.blit(txt,(i*140 +70, 240))
                     screen.blit(txt2, (i*140 + 45, 280))
-                elif len(kwords[i][0]) > 2:
-                    txt = fnt2.render(kwords[i][0], True, (0,0,0))
+                elif len(kwordstate[i][0]) > 2:
+                    txt = fnt2.render(kwordstate[i][0], True, (0,0,0))
                     screen.blit(txt, (i*140 +40, 250))
-                elif len (kwords[i][0]) == 1:
-                    txt = fnt.render(kwords[i][0], True, (0,0,0))
+                elif len (kwordstate[i][0]) == 1:
+                    txt = fnt.render(kwordstate[i][0], True, (0,0,0))
                     screen.blit(txt, (i*140 +70, 240))
                 else:
-                    txt = fnt.render(kwords[i][0], True, (0,0,0))
+                    txt = fnt.render(kwordstate[i][0], True, (0,0,0))
                     screen.blit(txt, (i*140 +40, 240))
+
+        for i in range(len(ewordstate)): 
+            if ewordstate[i][1] == "covered":
+                draw.rect(screen,(255,255,255), bottomcards[i])
+            else:
+                if len(krdict[ewords[i]])>= 9:
+                    txt = cfnt1.render(krdict[ewords[i]], True, (0,0,0))
+                    screen.blit(txt, (i*140+47, 545))
+                elif len(krdict[ewords[i]])>=7:
+                    txt = cfnt2.render(krdict[ewords[i]], True, (0,0,0))
+                    screen.blit(txt, (i*140+47, 545))
+                elif len(krdict[ewords[i]]) ==6 :
+                    txt = cfnt.render(krdict[ewords[i]], True, (0,0,0))
+                    screen.blit(txt, (i*140+47, 537))
+                else:
+                    txt = cfnt.render(krdict[ewords[i]], True, (0,0,0))
+                    screen.blit(txt, (i*140+60, 535))            
         display.flip()
         if c > 0 :
             return True
 
-    return False
+    return False #means user has won
   
 
-def turn(kwords,ewords, krdict, endict, kwordstate, ewordstate, cardmode1, cardmode2):   
+def turn(kwords,ewords, krdict, endict, kwordstate, ewordstate, cardmode1, cardmode2):
+    
     for i in range(len(cardmode1)):
         if cardmode1[i][0].collidepoint(mx,my) and mb[0] == 1:
             if kwordstate[i][1] != "solved":     
                 card1 = kwords[i]
-                kwordstate[i][1] = "uncovered" #screeb should redraw at this point
-                break                 
+                kwordstate[i][1] = "uncovered" #screen should redraw at this point
+                setup(screen, ewords, korean, kwordstate, ewordstate, cardstop, cardsbot)
+                break
+    c=0
     for i in range(len(cardmode2)):
         if cardmode2[i][0].collidepoint(mx,my) and mb[0] == 1:
             card2 = krdict(ewords[i])
             ewordstate[i][1] = "uncovered"  #screen should redraw at this point again
-            
-        if str(card1) == str(card2):
-            kwordstate[i][1] = "solved"
-            ewordstate[i][1] = "solved" #screen should redraw here too
-                   
-        else:
-            kwordstate[i][1] = "covered" #redraw here too
-            ewordstate[i][1] = "covered" 
- 
+            setup(screen, kwordstate, ewordstate, cardstop, cardsbot)
+            c+=1
+            break
+        c+=1 #will count how many times it loops before it breaks
+        
+    if str(card1) == str(card2):
+        kwordstate[c][1] = "solved"
+        ewordstate[c][1] = "solved" #screen should redraw here too
+        setup(screen, ewords, korean, kwordstate, ewordstate, cardstop, cardsbot)     
+    else:
+        kwordstate[i][1] = "covered" #redraw here too
+        ewordstate[i][1] = "covered" 
+        setup(screen, ewords, korean, kwordstate, ewordstate, cardstop, cardsbot)
+
+    return True
+
 running=True
 while running:
     for e in event.get():
@@ -135,49 +162,52 @@ while running:
     mx, my = mouse.get_pos()
     screen.fill((0,0,0))
 
-    screen.blit(title, (160, 9))
-    for r,v in zip(cardstop, cardsbot): #Don't really know what zip does...was in sir's code
-        draw.rect(screen,(255,255,255),r)
-        draw.rect(screen,(255,255,255),v)
-        
-    c=0 #card space
-    for k in kwords[:8]: #top row korean
-        if len(k)> 4: #special cases for diff len strings so spacing looks good
-            txt = fnt3.render(kwords[c][:2], True, (0,0,0)) #so the text fits in the rectangle and looks pretty
-            txt2 = fnt3.render(kwords[c][2:], True, (0,0,0))
-            screen.blit(txt,(c*140 +70, 240))
-            screen.blit(txt2, (c*140 + 45, 280))
-            c+=1
-        elif len(k) > 2:
-            txt = fnt2.render(kwords[c], True, (0,0,0))
-            screen.blit(txt, (c*140 +40, 250))
-            c+=1
-        elif len (k) == 1:
-            txt = fnt.render(kwords[c], True, (0,0,0))
-            screen.blit(txt, (c*140 +70, 240))
-            c+=1
-        else:
-            txt = fnt.render(kwords[c], True, (0,0,0))
-            screen.blit(txt, (c*140 +40, 240))
-            c+=1
-    c=0
-    for e in ewords:#bottom row english
-        if len(korean[e])>= 9:
-            txt = cfnt1.render(korean[e], True, (0,0,0))
-            screen.blit(txt, (c*140+47, 545))
-            c+=1
-        elif len(korean[e])>=7:
-            txt = cfnt2.render(korean[e], True, (0,0,0))
-            screen.blit(txt, (c*140+47, 545))
-            c+=1
-        elif len(korean[e]) ==6 :
-            txt = cfnt.render(korean[e], True, (0,0,0))
-            screen.blit(txt, (c*140+47, 537))
-            c+=1
-        else:
-            txt = cfnt.render(korean[e], True, (0,0,0))
-            screen.blit(txt, (c*140+60, 535))
-            c+=1
+    
+
+    setup(screen, ewords, korean, kwordstate, ewordstate, cardstop, cardsbot)
+    turn(kwords, ewords, korean,english,kwordstate,ewordstate, cardmodeT, cardmodeB)
+##    for r,v in zip(cardstop, cardsbot): #Don't really know what zip does...was in sir's code
+##        draw.rect(screen,(255,255,255),r)
+##        draw.rect(screen,(255,255,255),v)
+##        
+##    c=0 #card space
+##    for k in kwords[:8]: #top row korean
+##        if len(k)> 4: #special cases for diff len strings so spacing looks good
+##            txt = fnt3.render(kwords[c][:2], True, (0,0,0)) #so the text fits in the rectangle and looks pretty
+##            txt2 = fnt3.render(kwords[c][2:], True, (0,0,0))
+##            screen.blit(txt,(c*140 +70, 240))
+##            screen.blit(txt2, (c*140 + 45, 280))
+##            c+=1
+##        elif len(k) > 2:
+##            txt = fnt2.render(kwords[c], True, (0,0,0))
+##            screen.blit(txt, (c*140 +40, 250))
+##            c+=1
+##        elif len (k) == 1:
+##            txt = fnt.render(kwords[c], True, (0,0,0))
+##            screen.blit(txt, (c*140 +70, 240))
+##            c+=1
+##        else:
+##            txt = fnt.render(kwords[c], True, (0,0,0))
+##            screen.blit(txt, (c*140 +40, 240))
+##            c+=1
+##    c=0
+##    for e in ewords:#bottom row english
+##        if len(korean[e])>= 9:
+##            txt = cfnt1.render(korean[e], True, (0,0,0))
+##            screen.blit(txt, (c*140+47, 545))
+##            c+=1
+##        elif len(korean[e])>=7:
+##            txt = cfnt2.render(korean[e], True, (0,0,0))
+##            screen.blit(txt, (c*140+47, 545))
+##            c+=1
+##        elif len(korean[e]) ==6 :
+##            txt = cfnt.render(korean[e], True, (0,0,0))
+##            screen.blit(txt, (c*140+47, 537))
+##            c+=1
+##        else:
+##            txt = cfnt.render(korean[e], True, (0,0,0))
+##            screen.blit(txt, (c*140+60, 535))
+##            c+=1
 
     
     display.flip()
