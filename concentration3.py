@@ -1,4 +1,5 @@
-#Concentration2
+#Concentration3
+#Hopefully a better version of concentration 2
 #A game within Learn Korean but not developed enough to be put into a function and integrated properly
 #need 2 functions
 #one that draws stuff
@@ -8,17 +9,7 @@
 from random import *
 from pygame import *
 screen = display.set_mode((1200,800))
-screen.fill((255, 255, 255))
-
-font.init()
-init()
-ArialFont = font.SysFont("Arial", 150, True, False)
-cfnt = font.SysFont("Comic Sans MS", 30, False, False)
-cfnt1 = font.SysFont("Comic Sans MS", 20, True, False)
-cfnt2 = font.SysFont("Comic Sans MS", 25, True, False)
-fnt = font.Font("cyberbit.ttf",60)
-fnt2 = font.Font("cyberbit.ttf",40)
-fnt3 = font.Font("cyberbit.ttf",30)
+screen.fill((255,255,255))
 
 korean = {"사과":"apple", "주황색":"orange","바나나":"bannana",
           "배": "pear","포도":"grape","수박":"watermelon",
@@ -31,15 +22,15 @@ english = {"apple":"사과","orange":"주황색","bannana":"바나나", "pear":"
            "tomato":"토마토","eggplant":"가지", "cauliflower":"콜리 플라워",
            "cabbage":"양배추" ,"pepper":"후추"} 
 
-ewords = list(english.keys())
-shuffle(ewords)
+enlist = list(english.keys())
+shuffle(enlist)
+kwords = list(enlist[:8])  #actually english words
+ewords = list(enlist[:8])
 print(ewords)
-kwords = list(ewords[:8])  #actually english words
-ecardval = list(ewords[:8])
 shuffle(kwords)#must shuffle outside loop so words don't keep flashing
 print(kwords)
 
-title= ArialFont.render("Concentration", True, (255,0, 100))
+
 cardstop=[Rect(x*140+40, 200, 120, 175) for x in range(8)] #top row of cards
 cardsbot= [Rect(x*140+40, 475, 120, 175) for x in range(8)] #bottom row of cards
 
@@ -48,14 +39,15 @@ kwordstate =[] #records all the word states.
 ewordstate = []
 cardmodeT =[]
 cardmodeB = []
-for i in range(len(ecardval)):
-    ewordstate.append([ecardval[i],"covered"]) #because every word starts off covered
+for i in range(len(ewords)):
+    ewordstate.append([ewords[i],"covered"]) #because every word starts off covered
 for i in range(len(kwords)):
     kwordstate.append([kwords[i],"covered"]) #same list as ewordstate
 for i in range(len(cardstop)):
     cardmodeT.append([cardstop[i], "covered"])
     cardmodeB.append([cardsbot[i],"covered"])
-print((ewordstate))
+print(kwordstate)
+print(ewordstate)
     
 def drawscene(screen, ewords, endict, kwordstate, ewordstate,topcards, bottomcards):
     font.init()
@@ -75,49 +67,50 @@ def drawscene(screen, ewords, endict, kwordstate, ewordstate,topcards, bottomcar
                 
         mb = mouse.get_pressed()
         mx, my = mouse.get_pos()
-        screen.fill((0,0,0))
-
+        screen.fill((255,255,255))
+        
+        title= ArialFont.render("Concentration", True, (100,100, 100))
         screen.blit(title, (160, 9))
         
         c=0 
         for i in range(len(kwordstate)):
             if kwordstate[i][1] == "covered":
                 #print(topcards[i])
-                draw.rect(screen,(255,255,255), (topcards[i]))
+                draw.rect(screen,(0,0,0), (topcards[i]))
                 c += 1 #means user hasn't won yet
             else:
-                draw.rect(screen,(255,255,255), (topcards[i]))
+                draw.rect(screen,(0,0,0), (topcards[i]))
                 if len(endict[kwords[i]])> 4: #special cases for diff len strings so spacing looks good
-                    txt = fnt3.render(endict[kwords[i]][:2], True, (0,0,0)) #so the text fits in the rectangle and looks pretty
-                    txt2 = fnt3.render(endict[kwords[i]][2:], True, (0,0,0))
+                    txt = fnt3.render(endict[kwords[i]][:2], True, (255,255,255)) #so the text fits in the rectangle and looks pretty
+                    txt2 = fnt3.render(endict[kwords[i]][2:], True, (255,255,255))
                     screen.blit(txt,(i*140 +70, 240))
                     screen.blit(txt2, (i*140 + 45, 280))
                 elif len(endict[kwords[i]]) > 2:
-                    txt = fnt2.render(endict[kwords[i]], True, (0,0,0))
+                    txt = fnt2.render(endict[kwords[i]], True, (255,255,255))
                     screen.blit(txt, (i*140 +40, 250))
                 elif len (endict[kwords[i]]) == 1:
-                    txt = fnt.render(endict[kwords[i]], True, (0,0,0))
+                    txt = fnt.render(endict[kwords[i]], True, (255,255,255))
                     screen.blit(txt, (i*140 +70, 240))
                 else:
-                    txt = fnt.render(endict[kwords[i]], True, (0,0,0))
+                    txt = fnt.render(endict[kwords[i]], True, (255,255,255))
                     screen.blit(txt, (i*140 +40, 240))
 
         for i in range(len(ewordstate)): 
             if ewordstate[i][1] == "covered":
-                draw.rect(screen,(255,255,255), bottomcards[i])
+                draw.rect(screen,(0,0,0), bottomcards[i])
             else:
-                draw.rect(screen,(255,255,255), bottomcards[i])
+                draw.rect(screen,(0,0,0), bottomcards[i])
                 if len(ewords[i])>= 9:
-                    txt = cfnt1.render(ewords[i], True, (0,0,0))
+                    txt = cfnt1.render(ewords[i], True, (255,255,255))
                     screen.blit(txt, (i*140+47, 545))
                 elif len(ewords[i])>=7:
-                    txt = cfnt2.render(ewords[i], True, (0,0,0))
+                    txt = cfnt2.render(ewords[i], True, (255,255,255))
                     screen.blit(txt, (i*140+47, 545))
                 elif len(ewords[i]) ==6 :
-                    txt = cfnt.render(ewords[i], True, (0,0,0))
+                    txt = cfnt.render(ewords[i], True, (255,255,255))
                     screen.blit(txt, (i*140+47, 537))
                 else:
-                    txt = cfnt.render(ewords[i], True, (0,0,0))
+                    txt = cfnt.render(ewords[i], True, (255,255,255))
                     screen.blit(txt, (i*140+60, 535))            
         display.flip()
         if c > 0 :
@@ -129,8 +122,6 @@ def drawscene(screen, ewords, endict, kwordstate, ewordstate,topcards, bottomcar
 def turn(kwords,ewords, krdict, endict, kwordstate, ewordstate, cardmode1, cardmode2):
     clickone= False #checks if user has picked first card
     clicktwo = False
-    tt = 0  #turn counter top
-    tb = 0 #turn counter bottom
     running=True
     while running:
         for e in event.get():
@@ -146,24 +137,27 @@ def turn(kwords,ewords, krdict, endict, kwordstate, ewordstate, cardmode1, cardm
         #tb = 0 #turn counter bottom
         
         for i in range(len(cardmode1)):
+            c1 +=1 #will count how many times it loops before it breaks
             if cardmode1[i][0].collidepoint(mx,my) and mb[0] == 1:
-                c1 +=1 #will count how many times it loops before it breaks
-                if kwordstate[i][1] != "solved":     
+                if kwordstate[i][1] == "covered":     
                     card1 = kwords[i]
                     print(card1)
                     kwordstate[i][1] = "uncovered" #screen should redraw at this point
+                    print(kwordstate)
                     drawscene(screen, ewords, english, kwordstate, ewordstate, cardstop, cardsbot)
                     clickone = True
                     break
+            
            
         if clickone == True: 
             for i in range(len(cardmode2)):
+                c2+=1 #will count how many times it loops before it breaks
                 if cardmode2[i][0].collidepoint(mx,my) and mb[0] == 1:
-                    c2+=1 #will count how many times it loops before it breaks
-                    if ewordstate[i][1] != "solved":
+                    if ewordstate[i][1] == "covered":
                         card2 = ewords[i]
                         print(card2)
                         ewordstate[i][1] = "uncovered"  #screen should redraw at this point again
+                        print(ewordstate)
                         drawscene(screen, ewords, english,kwordstate, ewordstate, cardstop, cardsbot)
                         clicktwo = True
                         break
@@ -173,28 +167,30 @@ def turn(kwords,ewords, krdict, endict, kwordstate, ewordstate, cardmode1, cardm
             clickone = False
             clicktwo = False
             if str(card1) == str(card2):
-                kwordstate[c1][1] = "solved"
-                ewordstate[c2][1] = "solved" #screen should redraw here too
+                kwordstate[c1-1][1] = "solved"
+                ewordstate[c2-1][1] = "solved" #screen should redraw here too
                 print(kwordstate)
                 print (ewordstate)
                 drawscene(screen, ewords, english, kwordstate, ewordstate, cardstop, cardsbot)     
             else:
                 print(kwordstate)
                 print (ewordstate)
-                kwordstate[c1][1] = "covered" #redraw here too
-                ewordstate[c2][1] = "covered" 
-                drawscene(screen, ewords, english, kwordstate, ewordstate, cardstop, cardsbot)
+                kwordstate[c1-1][1] = "covered" #redraw here too
+                ewordstate[c2-1][1] = "covered" 
+                #drawscene(screen, ewords, english, kwordstate, ewordstate, cardstop, cardsbot)
 
     display.flip()
 
 #p1 = Rect(150,280,80,30)
 #p2 = Rect(570,280,80,30)
 
-running=True
-while running:
-    for e in event.get():
-        if e.type == QUIT:
-            running = False
+#running=True
+#while running:
+#    for e in event.get():
+#        if e.type == QUIT:
+#            running = False
+
+
 ##        if e.type == MOUSEBUTTONDOWN:
 ##            if person == "p1 wait":
 ##                if cardstop[0].collidepoint(e.pos):
@@ -213,14 +209,14 @@ while running:
 ##
 ##
 ##            
-    mb = mouse.get_pressed()
-    mx, my = mouse.get_pos()
-    screen.fill((0,0,0))
+   # mb = mouse.get_pressed()
+   # mx, my = mouse.get_pos()
+   # screen.fill((0,0,0))
 
     
 
-    drawscene(screen, ewords, english, kwordstate, ewordstate, cardstop, cardsbot)
-    turn(kwords, ewords, korean, english,kwordstate,ewordstate, cardmodeT, cardmodeB)
+drawscene(screen, ewords, english, kwordstate, ewordstate, cardstop, cardsbot)
+turn(kwords, ewords, korean, english,kwordstate,ewordstate, cardmodeT, cardmodeB)
 ##    for r,v in zip(cardstop, cardsbot): #Don't really know what zip does...was in sir's code
 ##        draw.rect(screen,(255,255,255),r)
 ##        draw.rect(screen,(255,255,255),v)
@@ -265,6 +261,6 @@ while running:
 ##            c+=1
 
     
-    display.flip()
-quit()
+    #display.flip()
+#quit()
 
