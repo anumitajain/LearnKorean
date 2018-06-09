@@ -49,7 +49,7 @@ for i in range(len(cardstop)):
 print(kwordstate)
 print(ewordstate)
     
-def drawscene(screen, ewords, endict, kwordstate, ewordstate,topcards, bottomcards):
+def drawscene(screen, ewords, endict, kwordstate, ewordstate,topcards, bottomcards):  #draws everything
     font.init()
     init()
     ArialFont = font.SysFont("Arial", 150, True, False)
@@ -77,7 +77,7 @@ def drawscene(screen, ewords, endict, kwordstate, ewordstate,topcards, bottomcar
             if kwordstate[i][1] == "covered":
                 #print(topcards[i])
                 draw.rect(screen,(0,0,0), (topcards[i]))
-                c += 1 #means user hasn't won yet
+                #c += 1 #means user hasn't won yet
             else:
                 draw.rect(screen,(0,0,0), (topcards[i]))
                 if len(endict[kwords[i]])> 4: #special cases for diff len strings so spacing looks good
@@ -111,17 +111,20 @@ def drawscene(screen, ewords, endict, kwordstate, ewordstate,topcards, bottomcar
                     screen.blit(txt, (i*140+47, 537))
                 else:
                     txt = cfnt.render(ewords[i], True, (255,255,255))
-                    screen.blit(txt, (i*140+60, 535))            
+                    screen.blit(txt, (i*140+60, 535))
+                    
         display.flip()
-        if c > 0 :
-            return True
 
-    return False #means user has won
+        return True
+        #if c > 0 :
+            #return True
+
+    #return False #means user has won
   
 #clickone= False #checks if user has picked first card
 def turn(kwords,ewords, krdict, endict, kwordstate, ewordstate, cardmode1, cardmode2):
     clickone= False #checks if user has picked first card
-    clicktwo = False
+    click2 = False
     running=True
     while running:
         for e in event.get():
@@ -135,48 +138,51 @@ def turn(kwords,ewords, krdict, endict, kwordstate, ewordstate, cardmode1, cardm
         c2 = 0 #card place bottom
         #tt = 0  #turn counter top
         #tb = 0 #turn counter bottom
-        
-        for i in range(len(cardmode1)):
-            c1 +=1 #will count how many times it loops before it breaks
-            if cardmode1[i][0].collidepoint(mx,my) and mb[0] == 1:
-                if kwordstate[i][1] == "covered":     
-                    card1 = kwords[i]
-                    print(card1)
-                    kwordstate[i][1] = "uncovered" #screen should redraw at this point
-                    print(kwordstate)
-                    drawscene(screen, ewords, english, kwordstate, ewordstate, cardstop, cardsbot)
-                    clickone = True
-                    break
+
+        if clickone == False: #so user can only select one top card at a time
+            for i in range(len(cardmode1)):
+                c1 +=1 #will count how many times it loops before it breaks
+                if cardmode1[i][0].collidepoint(mx,my) and mb[0] == 1:
+                    if kwordstate[i][1] == "covered":     
+                        card1 = kwords[i]
+                        print(card1)
+                        print(c1-1)
+                        kwordstate[i][1] = "uncovered" #screen should redraw at this point
+                        print(kwordstate)
+                        drawscene(screen, ewords, english, kwordstate, ewordstate, cardstop, cardsbot)
+                        clickone = True
+                        break
             
            
-        if clickone == True: 
+        if clickone == True: #so user can only select second card after first card has been selected
             for i in range(len(cardmode2)):
                 c2+=1 #will count how many times it loops before it breaks
                 if cardmode2[i][0].collidepoint(mx,my) and mb[0] == 1:
                     if ewordstate[i][1] == "covered":
                         card2 = ewords[i]
                         print(card2)
+                        print(c2-1)
                         ewordstate[i][1] = "uncovered"  #screen should redraw at this point again
                         print(ewordstate)
                         drawscene(screen, ewords, english,kwordstate, ewordstate, cardstop, cardsbot)
-                        clicktwo = True
+                        click2 = True
                         break
                 
                 
-        if clickone==True and clicktwo == True:
-            clickone = False
-            clicktwo = False
+        if clickone==True and click2 == True:
+            clickone = False #so new turn runs smoothly
+            click2 = False#
             if str(card1) == str(card2):
-                kwordstate[c1-1][1] = "solved"
+                kwordstate[c1-1][1] = "solved" #for some reason this changes kwordstate[7][1] to solved instead of [c1-1][1]
                 ewordstate[c2-1][1] = "solved" #screen should redraw here too
                 print(kwordstate)
                 print (ewordstate)
                 drawscene(screen, ewords, english, kwordstate, ewordstate, cardstop, cardsbot)     
             else:
+                kwordstate[c1-1][1] = "covered" #for some reason this doesn't change to covered
+                ewordstate[c2-1][1] = "covered"
                 print(kwordstate)
                 print (ewordstate)
-                kwordstate[c1-1][1] = "covered" #redraw here too
-                ewordstate[c2-1][1] = "covered" 
                 #drawscene(screen, ewords, english, kwordstate, ewordstate, cardstop, cardsbot)
 
     display.flip()
