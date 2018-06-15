@@ -11,7 +11,7 @@ smallfont = font.SysFont("Comic Sans MS", 15, False, False)
 #SCREEN
 screen = display.set_mode((1200,800))
 screen.fill((255, 255, 255))
-koreanint = {"사과":"apple", "오렌지":"orange","바나나":"bannana",
+koreanadv = {"사과":"apple", "오렌지":"orange","바나나":"bannana",
           "배": "pear","포도":"grape","수박":"watermelon",
           "감자":"potato","토마토":"tomato","가지": "eggplant",
           "콜리 플라워":"cauliflower","양배추":"cabbage","후추":"pepper"} #used in concentration()
@@ -367,7 +367,7 @@ def skintermediate():
 
         display.flip()
     return "sk intermediate"
-def skadvanced(korean):
+def skadvanced(krdict):
     
     #IMAGE LOADING
     blueArrowPic = image.load("blueArrow.png")    
@@ -383,7 +383,7 @@ def skadvanced(korean):
 
     #Font and word stuff
     fnt = font.Font("cyberbit.ttf",60)
-    words = list(korean.keys())
+    words = list(krdict.keys())
     #definitions =["hi, bye","hello","My name is", "How are you"]
     w = randint(0,len(words)-1) #picks the word in the list
     txtPic = fnt.render(words[w],True,(0,0,0)) #This only picks one word and only resets when the code loops
@@ -791,7 +791,7 @@ def gameIntro():
         if startRect.collidepoint(mx,my):
             screen.blit(startImageDarker, (600-startImageWidth//2, 720))
         if mb[0] == 1 and startRect.collidepoint(mx,my):
-            intro = False
+            return "play"
         display.flip()
 
 #SHOWCHART
@@ -936,7 +936,7 @@ def basketGame():
     heartPic = image.load("heart.png")
     helpIcon = image.load("help.jpg")
     helpIconDarker = image.load("help_dark.jpg")
-    myClock = time.Clock()
+    myClock = time.clock()
 
     #fills up the fallingLets to its capacity of 6. Also makes sure the Korean phonetic of "onBasket" is in the list. Also makes sure there's no repeats.
     while len(fallingLets)<6:        
@@ -992,7 +992,7 @@ def basketGame():
 
         #calls showChart(). You lose half of your points though.        
         if helpRect.collidepoint(mx,my):
-                screen.blit(helpIconDarker, (10, 50))
+            screen.blit(helpIconDarker, (10, 50))
         if mb[0] == 1 and helpRect.collidepoint(mx,my):
            showChart()
            points = points//2
@@ -1067,7 +1067,8 @@ def basketGame():
         screen.blit(scoreTxt, (0, 0))
         screen.blit(pointsTxt, (100, 0))
 
-        myClock.tick(60)    
+        time.sleep(0.006)
+        #myClock.tick(60)    
         display.flip()
 
 page = "menu"
@@ -1091,13 +1092,13 @@ while page != "exit":
     if page == "sk intermediate":
         page = skintermediate()
     if page == "sk advanced":
-        page = skadvanced(korean)
+        page = skadvanced(koreanadv)
     if page == "concentration":
         page = concentration()
     if page == "basket game":
         page = gameIntro()
-        if intro == False:
-            page = basketGame()
+    if page == "play":
+        page = basketGame()
     
 
 quit()
