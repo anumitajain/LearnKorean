@@ -13,13 +13,13 @@ smallfont = font.SysFont("Comic Sans MS", 15, False, False)
 #SCREEN
 screen = display.set_mode((1200,800))
 screen.fill((255, 255, 255))
-korean = {"사과":"apple", "주황색":"orange","바나나":"bannana",
+korean = {"사과":"apple", "오렌지":"orange","바나나":"bannana",
           "배": "pear","포도":"grape","수박":"watermelon",
           "감자":"potato","토마토":"tomato","가지": "eggplant",
           "콜리 플라워":"cauliflower","양배추":"cabbage","후추":"pepper"} #used in concentration()
 
-english = {"apple":"사과","orange":"주황색","bannana":"바나나", "pear":"배",
-               "grape":"포도","watermelon":"수박", "poatato":"감자",
+english = {"apple":"사과","orange":"오렌지","bannana":"바나나", "pear":"배",
+               "grape":"포도","watermelon":"수박", "potato":"감자",
                "tomato":"토마토","eggplant":"가지", "cauliflower":"콜리 플라워",
                "cabbage":"양배추" ,"pepper":"후추"} #used in concentration()
 cardstop=[Rect(x*140+40, 200, 120, 175) for x in range(8)] #top row of cards #used in concentration()
@@ -78,7 +78,7 @@ def start():
                 
         display.flip()
 def beginner():
-    running = True
+    
     #IMAGE LOADING
     blueArrowPic = image.load("blueArrow.png")    
     micPic = image.load("micPic.jpg")
@@ -90,12 +90,13 @@ def beginner():
     Pronounce= Fontt.render("Try to pronounce this word.", True, (0,0,0))
     startRecording = Fontt.render("^CLICK to start recording.", True, (0,0,0))
     NoUnderstand = smallfont.render("Google Speech Recognition could not understand audio.", True, (0,0,0))
+
     #Font and word stuff
     fnt = font.Font("cyberbit.ttf",60)
     words = ["안녕","여보세요","내 이름은","잘 지냈어요"]
     definitions =["hi, bye","hello","My name is", "How are you"]
-    a = randint(0,3) #
-    txtPic = fnt.render(words[a],True,(0,0,0)) #This only picks one word and only resets when the code loops
+    word = randint(0,3) #picks the word in the list
+    txtPic = fnt.render(words[word],True,(0,0,0)) #This only picks one word and only resets when the code loops
     heart = [880, 0, 0, 73]
     
     #RECTS
@@ -117,7 +118,8 @@ def beginner():
     screen.blit(heartPic, (1040, 0))
     screen.blit(heartPic, (1120, 0))
 
-    
+    recording = False
+    running = True
     while running:
         for evnt in event.get():          
             if evnt.type == QUIT:
@@ -125,48 +127,52 @@ def beginner():
                 return "menu"
             if evnt.type == MOUSEBUTTONDOWN:
                 click = True
-        if key.get_pressed()[27]: running = False
+        if key.get_pressed()[27]:
+            running = False
+            return "menu"
         mb = mouse.get_pressed()
         mx, my = mouse.get_pos()
         draw.rect(screen, (0), micRect, 2)
         draw.rect(screen, (0), KtxtRect, 2)
         draw.rect(screen, (0), statusRect, 2)
         
-        if micRect.collidepoint(mx,my):
-            if mb[0] == 1:
-                recording = True  
-                draw.rect(screen, (255,255,255), (465,442, 303, 30))
-                recordnotif = Fontt.render("Recording...", True, (0,0,0))
-                screen.blit(recordnotif,(465,442))
-                string = record()
-                spokentext = fnt.render(string, True, (0,0,0))
-                screen.blit(spokentext, (400,465))
-                if string == words[a]:
-                    screen.blit(correct, (500, 600))
+        if micRect.collidepoint(mx,my) and mb[0] == 1:
+            recording = True #add to function if making 
+            draw.rect(screen, (255,255,255), (465,442, 303, 30))
+            recordnotif = Fontt.render("Recording...", True, (0,0,0))
+            screen.blit(recordnotif,(465,442))
+            string = record() #add to function if making
+            spokentext = fnt.render(string, True, (0,0,0))
+            screen.blit(spokentext, (400,465))
+            if string == words[word]: #word needs to be added too
+                screen.blit(correct, (500, 600))
+                display.flip()
+                time.sleep(2)
+                draw.rect(screen, (255,255,255), incorrectRect)
+                break
+            else:
+                if heart[2] == 240: #so does heart
+                    screen.blit(gameOver, (0, 0))
+                    display.flip()
+                    time.sleep(5)
+                    return "menu"
+                else:
+                    screen.blit(incorrect, (500, 600))
                     display.flip()
                     time.sleep(2)
+                    draw.rect(screen, (255,255,255), statusRect)
+                    draw.rect(screen, (0,0,0), statusRect, 2)
                     draw.rect(screen, (255,255,255), incorrectRect)
-                    break
-                else:
-                    if heart[2] == 320:
-                        screen.blit(gameOver, (0, 0))
-                    else:
-                        screen.blit(incorrect, (500, 600))
-                        display.flip()
-                        time.sleep(2)
-                        draw.rect(screen, (255,255,255), statusRect)
-                        draw.rect(screen, (0,0,0), statusRect, 2)
-                        draw.rect(screen, (255,255,255), incorrectRect)
-                        heart[2]+=80
-                        draw.rect(screen, (255,255,255), heart)
-                        #b = randint(0,3)
-                        #txtPic2 = fnt.render(words[b],True,(0,0,0))
-                       # screen.blit(txtPic2,(400,150))
-                        
-            else:
-                recording = False
-                draw.rect(screen, (255,255,255), (465,442, 303, 30))
-                screen.blit(startRecording, (465, 442))
+                    heart[2]+=80
+                    draw.rect(screen, (255,255,255), heart)
+                    #b = randint(0,3)
+                    #txtPic2 = fnt.render(words[b],True,(0,0,0))
+                   # screen.blit(txtPic2,(400,150))
+                    
+        else:
+            recording = False
+            draw.rect(screen, (255,255,255), (465,442, 303, 30))
+            screen.blit(startRecording, (465, 442))
 
         display.flip()
     return "beginner"
@@ -355,7 +361,7 @@ def turn(kwords,ewords, krdict, endict, kwordstate, ewordstate, topcards, bottom
                 ewordstate[c2][1] = "solved" #screen should redraw here too
                 screen.blit(correct, (500, 400))
                 display.flip()
-                print("It's me!!!!")
+                #print("It's me!!!!")
                 time.sleep(1)
                 drawscene(screen, ewords,kwords, english, kwordstate, ewordstate, cardstop, cardsbot)
             else:
