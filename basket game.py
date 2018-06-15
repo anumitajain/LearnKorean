@@ -175,15 +175,20 @@ def makeFallingList(let):
 #the actual basket game!
 def basketGame():
     running=True
+    #bx is the x-coordinate of the moving basket
     bx = 0
+    #points is the number of points the user has while playing.
     points = 0
+    #lives is the number of lives lost.
     lives = 0
     listFalling_koreanCh = ["ㄱ", "ㄴ", "ㄷ", "ㄹ", "ㅁ", "ㅂ", "ㅅ", "ㅇ", "ㅈ", "ㄲ", "ㄸ", "ㅃ", "ㅆ", "ㅉ", "ㅊ", "ㅋ", "ㅌ", "ㅍ", "ㅏ", "ㅐ", "ㅑ", "ㅒ", "ㅓ", "ㅔ", "ㅕ", "ㅖ", "ㅗ", "ㅘ", "ㅙ", "ㅚ", "ㅛ", "ㅜ", "ㅝ", "ㅞ", "ㅟ", "ㅠ", "ㅡ", "ㅢ", "ㅣ"]
     listBasket_englishPh = ["g/k", "n/n", "d/t", "r/l", "m/m", "b/p", "s/t", "-/ng", "j/t", "kk/k", "tt/-", "pp/-", "ss/t", "jj/-", "ch/t", "k/k", "t/t", "p/p", "a", "ae", "ya", "yae", "eo", "e", "yeo", "ye", "o", "wa", "wae", "eo", "yo", "u", "wo", "we", "wi", "yu", "eu", "ui", "i"] 
     onBasket = choice(listBasket_englishPh)
+    #koIndex helps me find the related Korean phonetic for the random English word that's currently blitted on the basket.
     KoIndex = listBasket_englishPh.index(onBasket)
     fntBasket = font.SysFont("Comic Sans MS", 29, False, False)
     onBasketTxt = fntBasket.render(onBasket,True,(0,0,0))
+    #fallingLets is a list of 6, containing the 6 Korean characters that fall down.
     fallingLets = []
     fallingLets.append(listFalling_koreanCh[KoIndex])
     correctTxt = fntBasket.render("Correct!",True,(0,0,0))
@@ -196,6 +201,7 @@ def basketGame():
     helpIconDarker = image.load("help_dark.jpg")
     myClock = time.Clock()
 
+    #fills up the fallingLets to its capacity of 6. Also makes sure the Korean phonetic of "onBasket" is in the list. Also makes sure there's no repeats.
     while len(fallingLets)<6:        
         let = choice(listFalling_koreanCh)
         if let not in fallingLets:
@@ -226,7 +232,6 @@ def basketGame():
         mx, my = mouse.get_pos()
         mb = mouse.get_pressed()
         bx = moveBasket(bx)
-##        blitWhite = False
 
         #you can click on the helpRect to go to the helpful chart.
         helpRect = Rect(10, 50, 30, 30)
@@ -261,12 +266,15 @@ def basketGame():
             getTxtSize = fnt.render(fallingLets[i], True, (0, 0, 0))
             textWidth = getTxtSize.get_width()
             textHeight = getTxtSize.get_height()
-            #if a letter[i] collides with the basket and taken[i] is False,
+            #credit to Noor
+            #if a letter[i] collides with the basket and no action has been taken on it yet,
             if basketRect.collidepoint(i*200+85, fallingY[i]+15) and taken[i] == False: 
-##                blitWhite = True
+                #cover up the falling Korean character
                 draw.rect(screen, (255,255,255), (i*200+85, fallingY[i], textWidth, textHeight))
                 screen.blit(basket, (bx, 710))
                 screen.blit(onBasketTxt, ((bx+80)-textWidthFirst//2, 755))
+                #credit to Mr. Mac
+                #fallingIndex is the index in the main Korean-list, of the collided fallingLet
                 fallIndex = listFalling_koreanCh.index(fallingLets[i])
                 if fallIndex == KoIndex:
                     screen.blit(correctTxt, (100, 100))
@@ -275,12 +283,16 @@ def basketGame():
                     screen.blit(incorrectTxt, (100, 100))
                     heart[2]+=80
                     lives += 1
+                    #if the white heart-rect has covered up all the hearts:
                     if heart[2] == 1200:
                         gameOver()
+                #now, some action has been taken on FallingLets[i].
                 taken[i] = True
+                #supposed to blit a white rect over the falling Letter, but doesn't work when the letter isn't colliding with the basket anymore.
                 if taken[i] == True:
                     draw.rect(screen, (255,255,255), (i*200+85, fallingY[i], textWidth, textHeight))
 
+        
         if lives == 5:
             gameOver(points, highscoreList)
                 
@@ -291,9 +303,12 @@ def basketGame():
             fallingY = [- 100 + randint(-500, 0) for i in range(6)]
             onBasket = choice(listBasket_englishPh)
             KoIndex = listBasket_englishPh.index(onBasket)
+            #if all the letters reach the bottom, they have to restart, and therefore they have to all turn into False
+            #to show that no event has happened to them yet.
             taken = [False, False, False, False, False, False]
             fallingLets = makeFallingList(listFalling_koreanCh[KoIndex])
-                        
+
+        #basically the second event loop. Stuff also happens here, but it's the repeat of the first one with different letters.                
         for i in range(6):        
             fallingY[i] += 2
             getTxtSize = fnt.render(fallingLets[i], True, (0, 0, 0))
