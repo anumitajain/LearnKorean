@@ -202,7 +202,7 @@ def concentrationadv():
         mx, my = mouse.get_pos()        
         myClock = time.clock()
         print(myClock)
-        drawscene(screen,click,myClock, ewords, kwords, englishadv, kwordstate, ewordstate, cardstop, cardsbot)
+        drawscene(screen,click, myClock, ewords, kwords, englishadv, kwordstate, ewordstate, cardstop, cardsbot)
         ret = turn(myClock,kwords, ewords, koreanint, englishadv,kwordstate,ewordstate, cardstop, cardsbot)
         if ret != "play":
             return ret

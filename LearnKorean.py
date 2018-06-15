@@ -74,6 +74,7 @@ def start():
                 draw.rect(screen,(255,255,0),r,2)
                 
         display.flip()
+        
 def speakkoreanIntro():
     running= True
     myClock = time.clock()
@@ -502,7 +503,7 @@ def concentrationint():
         myClock = time.clock()
         print(myClock)
         drawscene(screen,click,myClock, ewords, kwords, englishint, kwordstate, ewordstate, cardstop, cardsbot)
-        ret = turn(myClock,kwords, ewords, koreanint, englishint,kwordstate,ewordstate, cardstop, cardsbot)
+        ret = turn(myClock,kwords, ewords, koreanint, englishint, kwordstate,ewordstate, cardstop, cardsbot)
         if ret != "play":
             return ret
         else:
@@ -741,6 +742,7 @@ def turn(myClock, kwords,ewords, krdict, endict, kwordstate, ewordstate, topcard
                 
     return "play"
     display.flip()
+
 
 #BASKET GAME TIME!!!!
 #the highscore is kept during the time the game runs. If you replay the game (press the replay button), the highscore will be kept, but if you exit out of the game, the highscore will be lost.
