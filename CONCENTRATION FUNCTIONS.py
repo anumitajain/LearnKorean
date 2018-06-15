@@ -38,8 +38,8 @@ englishbeg = {"g/k":"ㄱ", "n/n":"ㄴ", "d/t":"ㄷ", "r/l":"ㄹ", "m/m":"ㅁ", "
               "p/p":"ㅍ", "a":"ㅏ", "ae":"ㅐ", "ya":"ㅑ", "yae":"ㅒ", "eo":"ㅓ", "e":"ㅔ",
               "yeo":"ㅕ", "ye":"ㅖ", "o":"ㅗ", "wa":"ㅘ", "wae":"ㅙ", "eo":"ㅚ", "yo":"ㅛ",
               "u":"ㅜ", "wo":"ㅝ", "we":"ㅞ", "wi":"ㅟ", "yu":"ㅠ", "eu":"ㅡ", "ui":"ㅢ", "i":"ㅣ"}
-cardstop=[Rect(x*160+40, 200, 120, 175) for x in range(8)] #top row of cards #used in concentration()
-cardsbot= [Rect(x*160+40, 475, 120, 175) for x in range(8)] #bottom row of cards #used in concentration()
+cardstop=[Rect(x*140+40, 200, 120, 175) for x in range(8)] #top row of cards #used in concentration()
+cardsbot= [Rect(x*140+40, 475, 120, 175) for x in range(8)] #bottom row of cards #used in concentration()
 
 
 def start():
@@ -78,18 +78,21 @@ def start():
 
 def concentrationIntro():
     running= True
+    click = False
     myClock = time.clock()
     font.init()
     init()
     ArialFont = font.SysFont("Arial", 40, True, False)
     buttons = [Rect(450,y*150+90,300,80) for y in range(4)]
     vals = ["beginner","intermediate","advanced", "ultimate"] #Vals that will be blitted on screen
-    compvals = ["c beginner","c intermediate","c advanced", "ultimate"]
+    compvals = ["c beginner","c intermediate","c advanced", "c ultimate"]
     
     while running:
         for e in event.get():
             if e.type == QUIT:
                 return "menu"
+            if e.type == MOUSEBUTTONDOWN:
+                click = True
             
         mb = mouse.get_pressed()
         mx, my = mouse.get_pos()
@@ -104,7 +107,7 @@ def concentrationIntro():
             #display.flip()
             if r.collidepoint(mx,my):
                 draw.rect(screen,(0,255,0),r,2)
-                if mb[0]==1:
+                if click == True:
                     time.sleep (1) #so user doesn't pick card when picking mode
                     return c
             else:
@@ -113,7 +116,47 @@ def concentrationIntro():
         display.flip()
 
 
+def concentrationbeg():
+    enlist = list(englishbeg.keys())
+    shuffle(enlist)
+    kwords = list(enlist[:8])  #actually english words
+    ewords = list(enlist[:8])
+    shuffle(kwords)#must shuffle outside loop so words don't keep flashing
 
+    kwordstate =[] #records all the word states.
+                   #Will only be used when changing the state
+    ewordstate = []
+
+    for i in range(len(ewords)): #one loop for 4 lists because they all have the same length
+        ewordstate.append([ewords[i],"covered"]) #because every word starts off covered
+        kwordstate.append([kwords[i],"covered"]) #same list as ewordstate
+       
+    print(kwordstate)
+    print(ewordstate)
+    replayRect = Rect(1100,700,95,95)
+    running=True
+    click = 0
+    
+    while running:
+        for e in event.get():
+            if e.type == QUIT:
+                running = False
+                return "menu"
+        if key.get_pressed()[27]:
+            running = False
+            return "menu"
+
+        mb = mouse.get_pressed()
+        mx, my = mouse.get_pos()
+        #Clock Attempt
+        #myClock = time.clock()
+        #print(myClock)
+        drawscene(screen,click,ewords, kwords, englishbeg, kwordstate, ewordstate, cardstop, cardsbot)
+        ret = turn(kwords, ewords,englishbeg,kwordstate,ewordstate, cardstop, cardsbot)
+        if ret != "play":
+            return ret
+        else:
+            return "c beginner" 
 def concentrationint():
     
     enlist = list(englishint.keys())
@@ -147,24 +190,14 @@ def concentrationint():
 
         mb = mouse.get_pressed()
         mx, my = mouse.get_pos()        
-        myClock = time.clock()
-        print(myClock)
-        drawscene(screen,click,myClock, ewords, kwords, englishint, kwordstate, ewordstate, cardstop, cardsbot)
-        ret = turn(myClock,kwords, ewords, koreanint, englishint,kwordstate,ewordstate, cardstop, cardsbot)
+##        myClock = time.clock()
+##        print(myClock)
+        drawscene(screen,click, ewords, kwords, englishint, kwordstate, ewordstate, cardstop, cardsbot)
+        ret = turn(kwords, ewords, englishint,kwordstate,ewordstate, cardstop, cardsbot)
         if ret != "play":
             return ret
         else:
             return "c intermediate" 
-##        s=0
-##        for i in range(len(kwordstate)):
-##            if kwordstate[i][1] == "solved":
-##                s +=1
-##
-##        if s == 8:
-##            if replayRect.collidepoint(mx,my) and mb[0]==1:
-##                return "concentration"
-    #display.flip()
-    #return "menu"
 
 
 def concentrationadv():
@@ -202,14 +235,55 @@ def concentrationadv():
         mx, my = mouse.get_pos()        
         myClock = time.clock()
         print(myClock)
-        drawscene(screen,click,myClock, ewords, kwords, englishadv, kwordstate, ewordstate, cardstop, cardsbot)
-        ret = turn(myClock,kwords, ewords, koreanint, englishadv,kwordstate,ewordstate, cardstop, cardsbot)
+        drawscene(screen,click, ewords, kwords, englishadv, kwordstate, ewordstate, cardstop, cardsbot)
+        ret = turn(kwords, ewords, englishadv,kwordstate,ewordstate, cardstop, cardsbot)
         if ret != "play":
             return ret
         else:
-            return "c advanced" 
+            return "c advanced"
+def concentrationult():
+    enlist = list(englishult.keys())
+    shuffle(enlist)
+    kwords = list(enlist[:8])  #actually english words
+    ewords = list(enlist[:8])
+    shuffle(kwords)#must shuffle outside loop so words don't keep flashing
+
+    kwordstate =[] #records all the word states.
+                   #Will only be used when changing the state
+    ewordstate = []
+
+    for i in range(len(ewords)): #one loop for 4 lists because they all have the same length
+        ewordstate.append([ewords[i],"covered"]) #because every word starts off covered
+        kwordstate.append([kwords[i],"covered"]) #same list as ewordstate
+       
+    #print(kwordstate)
+    #print(ewordstate)
+    replayRect = Rect(1100,700,95,95)
+    running=True
+    click = 0
     
-def drawscene(screen,click,myClock, ewords, kwords, endict, kwordstate, ewordstate,topcards, bottomcards):  #draws everything
+    while running:
+        for e in event.get():
+            if e.type == QUIT:
+                running = False
+                return "menu"
+        if key.get_pressed()[27]:
+            running = False
+            return "menu"
+
+        mb = mouse.get_pressed()
+        mx, my = mouse.get_pos()
+        #Attempt to add clock feat.
+        #myClock = time.clock()
+        #print(myClock)
+        drawscene(screen,click, ewords, kwords, englishult, kwordstate, ewordstate, cardstop, cardsbot)
+        ret = turn(kwords, ewords, englishult,kwordstate,ewordstate, cardstop, cardsbot)
+        if ret != "play":
+            return ret
+        else:
+            return "c ultimate"
+    
+def drawscene(screen,click,ewords, kwords, endict, kwordstate, ewordstate,topcards, bottomcards):  #draws everything
     font.init()
     init()
     ArialFont = font.SysFont("Arial", 150, True, False)
@@ -260,17 +334,17 @@ def drawscene(screen,click,myClock, ewords, kwords, endict, kwordstate, ewordsta
             if len(endict[kwords[i]])> 4: #special cases for diff len strings so spacing looks good
                 txt = fnt3.render(endict[kwords[i]][:endict[kwords[i]].rfind(" ")], True, (255,255,255)) #so the text fits in the rectangle and looks pretty
                 txt2 = fnt3.render(endict[kwords[i]][endict[kwords[i]].rfind(" "):], True, (255,255,255))
-                screen.blit(txt,(i*160 +70, 240))
-                screen.blit(txt2, (i*160 + 45, 280))
+                screen.blit(txt,(i*140 +70, 240))
+                screen.blit(txt2, (i*140 + 45, 280))
             elif len(endict[kwords[i]]) > 2:
                 txt = fnt2.render(endict[kwords[i]], True, (255,255,255))
-                screen.blit(txt, (i*160 +40, 250))
+                screen.blit(txt, (i*140 +40, 250))
             elif len (endict[kwords[i]]) == 1:
                 txt = fnt.render(endict[kwords[i]], True, (255,255,255))
-                screen.blit(txt, (i*160 +70, 240))
+                screen.blit(txt, (i*140 +70, 240))
             else:
                 txt = fnt.render(endict[kwords[i]], True, (255,255,255))
-                screen.blit(txt, (i*160 +40, 240))
+                screen.blit(txt, (i*140 +40, 240))
 
     for i in range(len(ewordstate)): 
         if ewordstate[i][1] == "covered":
@@ -280,21 +354,21 @@ def drawscene(screen,click,myClock, ewords, kwords, endict, kwordstate, ewordsta
             #screen.blit(correct, (550, 400))
             if len(ewords[i])>= 9:
                 txt = cfnt1.render(ewords[i], True, (255,255,255))
-                screen.blit(txt, (i*160+47, 545))
+                screen.blit(txt, (i*140+47, 545))
             elif len(ewords[i])>=7:
                 txt = cfnt2.render(ewords[i], True, (255,255,255))
-                screen.blit(txt, (i*160+47, 545))
+                screen.blit(txt, (i*140+47, 545))
             elif len(ewords[i]) ==6 :
                 txt = cfnt.render(ewords[i], True, (255,255,255))
-                screen.blit(txt, (i*160+47, 537))
+                screen.blit(txt, (i*140+47, 537))
             else:
                 txt = cfnt.render(ewords[i], True, (255,255,255))
-                screen.blit(txt, (i*160+60, 535))
+                screen.blit(txt, (i*140+60, 535))
                 
     display.flip()
 
     
-def turn(myClock, kwords,ewords, krdict, endict, kwordstate, ewordstate, topcards, bottomcards):
+def turn(kwords,ewords, endict, kwordstate, ewordstate, topcards, bottomcards):
     click1= False #checks if user has picked first card
     click2 = False
     running=True
@@ -354,7 +428,7 @@ def turn(myClock, kwords,ewords, krdict, endict, kwordstate, ewordstate, topcard
                     if kwordstate[i][1] == "covered":     
                         card1 = kwords[i]
                         kwordstate[i][1] = "uncovered" #screen should redraw at this point
-                        drawscene(screen,click,myClock,ewords,kwords, endict, kwordstate, ewordstate, cardstop, cardsbot)
+                        drawscene(screen,click,ewords,kwords, endict, kwordstate, ewordstate, cardstop, cardsbot)
                         click1 = True
                         break
             
@@ -366,7 +440,7 @@ def turn(myClock, kwords,ewords, krdict, endict, kwordstate, ewordstate, topcard
                     if ewordstate[i][1] == "covered":
                         card2 = ewords[i]
                         ewordstate[i][1] = "uncovered"  #screen should redraw at this point again
-                        drawscene(screen,click,myClock, ewords,kwords,endict,kwordstate, ewordstate, cardstop, cardsbot)
+                        drawscene(screen,click,ewords,kwords,endict,kwordstate, ewordstate, cardstop, cardsbot)
                         click2 = True
                         break
                 
@@ -382,12 +456,12 @@ def turn(myClock, kwords,ewords, krdict, endict, kwordstate, ewordstate, topcard
                 display.flip()
                 #print("It's me!!!!")
                 time.sleep(1)
-                drawscene(screen,click,myClock, ewords,kwords, endict, kwordstate, ewordstate, cardstop, cardsbot)
+                drawscene(screen,click,ewords,kwords, endict, kwordstate, ewordstate, cardstop, cardsbot)
             else:
                 kwordstate[c1][1] = "covered" #for some reason this doesn't change to covered
                 ewordstate[c2][1] = "covered"
                 time.sleep(1)
-                drawscene(screen,click,myClock, ewords,kwords, endict, kwordstate, ewordstate, cardstop, cardsbot)
+                drawscene(screen,click,ewords,kwords, endict, kwordstate, ewordstate, cardstop, cardsbot)
                 
     return "play"
     display.flip()
@@ -403,6 +477,6 @@ while page != "exit":
         page = concentrationint()
     if page == "c advanced":
         page = concentrationadv()
-    if page == "ultimate":
+    if page == "c ultimate":
         page = concentrationult()
 quit()
