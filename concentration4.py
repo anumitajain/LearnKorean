@@ -1,16 +1,10 @@
-#Concentration3
-#Hopefully a better version of concentration 2
-#A game within Learn Korean but not developed enough to be put into a function and integrated properly
-#need 2 functions
-#one that draws stuff
-#one that is the turn
-
+#BROKEN PRE-HISTORic Version of Concentrationfuntionworks.py
 from random import *
 from pygame import *
-
+import time
 
 screen = display.set_mode((1200,800))
-
+#screen.fill((255,255,255))
 korean = {"사과":"apple", "주황색":"orange","바나나":"bannana",
           "배": "pear","포도":"grape","수박":"watermelon",
           "감자":"potato","토마토":"tomato","가지": "eggplant",
