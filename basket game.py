@@ -6,25 +6,15 @@ from random import *
 font.init()
 init()
 screen = display.set_mode((1200, 800))
+#the highscore is kept during the time the game runs. If you replay the game (press the replay button), the highscore will be kept, but if you exit out of the game, the highscore will be lost.
 highscoreList = [0]
 
-#IMAGES
-basket = image.load("basketRealReal.jpg")
-heartPic = image.load("heart.png")
-helpIcon = image.load("help.jpg")
-helpIconDarker = image.load("help_dark.jpg")
-
-#FONT
-fnt = font.Font("Cyberbit.ttf", 50)
-fntBasket = font.SysFont("Comic Sans MS", 29, False, False)
-correctTxt = fntBasket.render("Correct!",True,(0,0,0))
-incorrectTxt = fntBasket.render("Incorrect!",True,(0,0,0))
-scoreTxt = fntBasket.render("Score: ", True, (0,0,0))
-
+#GLOBAL RELATED LISTS FOR BASKET GAME
 listFalling_koreanCh = ["ㄱ", "ㄴ", "ㄷ", "ㄹ", "ㅁ", "ㅂ", "ㅅ", "ㅇ", "ㅈ", "ㄲ", "ㄸ", "ㅃ", "ㅆ", "ㅉ", "ㅊ", "ㅋ", "ㅌ", "ㅍ", "ㅏ", "ㅐ", "ㅑ", "ㅒ", "ㅓ", "ㅔ", "ㅕ", "ㅖ", "ㅗ", "ㅘ", "ㅙ", "ㅚ", "ㅛ", "ㅜ", "ㅝ", "ㅞ", "ㅟ", "ㅠ", "ㅡ", "ㅢ", "ㅣ"]
 listBasket_englishPh = ["g/k", "n/n", "d/t", "r/l", "m/m", "b/p", "s/t", "-/ng", "j/t", "kk/k", "tt/-", "pp/-", "ss/t", "jj/-", "ch/t", "k/k", "t/t", "p/p", "a", "ae", "ya", "yae", "eo", "e", "yeo", "ye", "o", "wa", "wae", "eo", "yo", "u", "wo", "we", "wi", "yu", "eu", "ui", "i"] 
 
 #GAMEINTRO
+#the intro page for the basket game. You only see it once.
 def gameIntro():
     myClock = time.Clock()
     intro = True
@@ -60,6 +50,7 @@ def gameIntro():
         draw.rect(screen, (255,255,255), startRect, 2) 
         screen.blit(startImage, (600-startImageWidth//2, 720))
         screen.blit(helpIcon, (410, 668))
+        
         if startRect.collidepoint(mx,my):
             screen.blit(startImageDarker, (600-startImageWidth//2, 720))
         if mb[0] == 1 and startRect.collidepoint(mx,my):
@@ -67,6 +58,8 @@ def gameIntro():
         display.flip()
 
 #SHOWCHART
+#shows the chart that contains the hangul characters and the matching English phonetic sounds for basket game.
+#you can access it by clicking the help button during the game, but you lose half your points in exchange. 
 def showChart():
     intermission = True
     while intermission == True:
@@ -91,6 +84,9 @@ def showChart():
         display.flip()
 
 #GAMEOVER
+#the game-over page for the basket game.
+#you can exit the game (by clicking the x in the right corner), or replay the game (goes to the screen with falling Korean characters aka 'basketGame()'), or go to the main menu.
+#also shows how many points you got before you died, and underneath, the highscore. (Highscore 
 def gameOver(points, highscoreList):
     gameOver = True 
     while gameOver == True:
@@ -122,8 +118,10 @@ def gameOver(points, highscoreList):
         
         points_Txt = fntPoints.render("%d" %(points),True,(0,0,0))
         pointsWidth = points_Txt.get_width()
-        screen.blit(points_Txt, (600-pointsWidth//2, 250))        
+        screen.blit(points_Txt, (600-pointsWidth//2, 250))
         
+        #how my highscoreList works: has a list with '0' in it. If the current point is higher than the last item in the list, it adds to the highscoreList.
+        #it blits the last item in the list after everything, aka the highscore.
         if points > highscoreList[-1]:
             highscoreList.append(points)
                         
@@ -138,20 +136,14 @@ def gameOver(points, highscoreList):
         
         if replayRect.collidepoint(mx,my) and mb[0] == 1:
             basketGame()
-        if homeRect.collidepoint(mx,my) and mb[0] == 1:
-            gameIntro()
+##        if homeRect.collidepoint(mx,my) and mb[0] == 1:  
+##            gameIntro()                                             anumita!!!!!!! REPLACE gameIntro() WITH WHATEVER THE MAIN-MENU FUNCTION IS
             
         display.flip()
     return highscoreList
-
-#BLITHIGHSCORE
-def blitHighScore(highscore):
-    fntScore = font.SysFont("Comic Sans MS", 40, False, False)
-    highScore_Txt = fntScore.render("Highscore: %d" %(highscore),True,(0,0,0))
-    
                                   
 #MOVEBASKET
-##bx = 0
+#returns changed bx to move the basket left and right.
 def moveBasket(bx):
     keys = key.get_pressed()    
     if keys[K_LEFT] and bx >= 0:
@@ -160,22 +152,16 @@ def moveBasket(bx):
         bx += 7
     return bx
 
-#BLITLETTER
-def blitLetter(wordsA):
-    txtPic = fnt.render(wordsA[x],True,(0,0,0))
-    return txtPic
-    
-
 #DRAWINGLETTERS
+#draws the falling Korean characters.
 def drawingLetters(fallingLets,fallingY):
+    fnt = font.Font("Cyberbit.ttf", 50)
     for i in range(6):
-##        if blitWhite == True:
-##            draw.rect(screen, (255,255,255), (0, 0))
-##        else:
         txtPic1 = fnt.render(fallingLets[i],True,(0,0,0))
         screen.blit(txtPic1, (i*200+85, fallingY[i]))
 
 #MAKENEWLIST
+#it makes a new list of Korean characters for the second+ times it loops.
 def makeFallingList(let):
     fallingLets = [let]
     while len(fallingLets)<6:
@@ -186,6 +172,7 @@ def makeFallingList(let):
     return fallingLets
 
 #BASKETGAME
+#the actual basket game!
 def basketGame():
     running=True
     bx = 0
@@ -194,11 +181,19 @@ def basketGame():
     listFalling_koreanCh = ["ㄱ", "ㄴ", "ㄷ", "ㄹ", "ㅁ", "ㅂ", "ㅅ", "ㅇ", "ㅈ", "ㄲ", "ㄸ", "ㅃ", "ㅆ", "ㅉ", "ㅊ", "ㅋ", "ㅌ", "ㅍ", "ㅏ", "ㅐ", "ㅑ", "ㅒ", "ㅓ", "ㅔ", "ㅕ", "ㅖ", "ㅗ", "ㅘ", "ㅙ", "ㅚ", "ㅛ", "ㅜ", "ㅝ", "ㅞ", "ㅟ", "ㅠ", "ㅡ", "ㅢ", "ㅣ"]
     listBasket_englishPh = ["g/k", "n/n", "d/t", "r/l", "m/m", "b/p", "s/t", "-/ng", "j/t", "kk/k", "tt/-", "pp/-", "ss/t", "jj/-", "ch/t", "k/k", "t/t", "p/p", "a", "ae", "ya", "yae", "eo", "e", "yeo", "ye", "o", "wa", "wae", "eo", "yo", "u", "wo", "we", "wi", "yu", "eu", "ui", "i"] 
     onBasket = choice(listBasket_englishPh)
-    KoIndex = listBasket_englishPh.index(onBasket) 
+    KoIndex = listBasket_englishPh.index(onBasket)
+    fntBasket = font.SysFont("Comic Sans MS", 29, False, False)
     onBasketTxt = fntBasket.render(onBasket,True,(0,0,0))
     fallingLets = []
     fallingLets.append(listFalling_koreanCh[KoIndex])
-
+    correctTxt = fntBasket.render("Correct!",True,(0,0,0))
+    incorrectTxt = fntBasket.render("Incorrect!",True,(0,0,0))
+    scoreTxt = fntBasket.render("Score: ", True, (0,0,0))
+    fnt = font.Font("Cyberbit.ttf", 50)
+    basket = image.load("basketRealReal.jpg")
+    heartPic = image.load("heart.png")
+    helpIcon = image.load("help.jpg")
+    helpIconDarker = image.load("help_dark.jpg")
     myClock = time.Clock()
 
     while len(fallingLets)<6:        
@@ -208,9 +203,19 @@ def basketGame():
 
     shuffle(fallingLets)
 
+    #creates random negative y-coordinates for the Korean characters to fall from.
     fallingY = [randint(-500,0) for i in range(6)]
 
+    #credit goes to Mr. Mac (you).
+    #'heart' is a list containing the rect coordinates for a white rect.
+    #the rect increases the x-value to cover the heart-images when the wrong Korean character collides with the basket.
+    #this creates the illusion that hearts/lives are being lost.
     heart = [800, 0, 0, 73]
+    
+    #credit goes to Noor (Nasri).
+    #taken is a list that represents the states of the falling Korean characters.
+    #later on in the function, if the related FallingLet is colliding with the basket, the False value changes to True.
+    #this helps me draw the heartRect properly, blit over the falling Korean character, etc.
     taken = [False, False, False, False, False, False]
 
     while running:
@@ -221,8 +226,9 @@ def basketGame():
         mx, my = mouse.get_pos()
         mb = mouse.get_pressed()
         bx = moveBasket(bx)
-        blitWhite = False
-       
+##        blitWhite = False
+
+        #you can click on the helpRect to go to the helpful chart.
         helpRect = Rect(10, 50, 30, 30)
         draw.rect(screen, (255,255,255), helpRect)
         basketRect = Rect(bx, 710, 160, 90)
@@ -242,19 +248,22 @@ def basketGame():
         screen.blit(onBasketTxt, ((bx+80)-textWidthFirst//2, 755))
         drawingLetters(fallingLets, fallingY)
 
+        #calls showChart(). You lose half of your points though.        
         if helpRect.collidepoint(mx,my):
                 screen.blit(helpIconDarker, (10, 50))
         if mb[0] == 1 and helpRect.collidepoint(mx,my):
            showChart()
            points = points//2
-        
+
+        #this is the action loop. Stuff happens here.
         for i in range(6):
             fallingY[i] += 2
             getTxtSize = fnt.render(fallingLets[i], True, (0, 0, 0))
             textWidth = getTxtSize.get_width()
             textHeight = getTxtSize.get_height()
-            if basketRect.collidepoint(i*200+85, fallingY[i]+15) and taken[i] == False:
-                blitWhite = True
+            #if a letter[i] collides with the basket and taken[i] is False,
+            if basketRect.collidepoint(i*200+85, fallingY[i]+15) and taken[i] == False: 
+##                blitWhite = True
                 draw.rect(screen, (255,255,255), (i*200+85, fallingY[i], textWidth, textHeight))
                 screen.blit(basket, (bx, 710))
                 screen.blit(onBasketTxt, ((bx+80)-textWidthFirst//2, 755))
