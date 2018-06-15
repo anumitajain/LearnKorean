@@ -204,8 +204,8 @@ def concentrationadv():
     
     enlist = list(englishadv.keys())
     shuffle(enlist)
-    kwords = list(enlist[:7])  #actually english words
-    ewords = list(enlist[:7])
+    kwords = list(enlist[:8])  #actually english words
+    ewords = list(enlist[:8])
     shuffle(kwords)#must shuffle outside loop so words don't keep flashing
 
     kwordstate =[] #records all the word states.
@@ -235,10 +235,10 @@ def concentrationadv():
         mx, my = mouse.get_pos()        
         myClock = time.clock()
         print(myClock)
-<<<<<<< HEAD
+
         drawscene(screen,click, myClock, ewords, kwords, englishadv, kwordstate, ewordstate, cardstop, cardsbot)
         ret = turn(myClock,kwords, ewords, koreanint, englishadv,kwordstate,ewordstate, cardstop, cardsbot)
-=======
+
         drawscene(screen,click, ewords, kwords, englishadv, kwordstate, ewordstate, cardstop, cardsbot)
         ret = turn(kwords, ewords, englishadv,kwordstate,ewordstate, cardstop, cardsbot)
         if ret != "play":
@@ -282,7 +282,7 @@ def concentrationult():
         #print(myClock)
         drawscene(screen,click, ewords, kwords, englishult, kwordstate, ewordstate, cardstop, cardsbot)
         ret = turn(kwords, ewords, englishult,kwordstate,ewordstate, cardstop, cardsbot)
->>>>>>> 75258cb5846b11332614e35e693587144ac9c58f
+
         if ret != "play":
             return ret
         else:

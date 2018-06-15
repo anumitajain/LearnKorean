@@ -6,12 +6,13 @@ import time
 #Setting fonts
 font.init()
 init()
+##myClock = time.Clock()
 Fontt = font.SysFont("Comic Sans MS", 20, False, False)
 smallfont = font.SysFont("Comic Sans MS", 15, False, False)
 #SCREEN
 screen = display.set_mode((1200,800))
 screen.fill((255, 255, 255))
-koreanint = {"사과":"apple", "오렌지":"orange","바나나":"bannana",
+korean = {"사과":"apple", "오렌지":"orange","바나나":"bannana",
           "배": "pear","포도":"grape","수박":"watermelon",
           "감자":"potato","토마토":"tomato","가지": "eggplant",
           "콜리 플라워":"cauliflower","양배추":"cabbage","후추":"pepper"} #used in concentration()
@@ -21,20 +22,25 @@ englishadv = {"apple":"사과","orange":"오렌지","bannana":"바나나", "pear
                "tomato":"토마토","eggplant":"가지", "cauliflower":"콜리 플라워",
                "cabbage":"양배추" ,"pepper":"후추"} #used in concentrationadv() 
 
-englishult = {"hi":"안녕","good day":"좋은 날","hello":"여보세요","My name is":"내 이름은",
-              "How are you":"잘 지냈어요", "How much":"얼마나","Good morning":"좋은 아침",
-              "Good night":"안녕히 주무세요","apple":"사과","orange":"오렌지","bannana":"바나나", "pear":"배",
+englishult = {"apple":"사과","orange":"오렌지","bannana":"바나나", "pear":"배",
                "grape":"포도","watermelon":"수박", "potato":"감자",
                "tomato":"토마토","eggplant":"가지", "cauliflower":"콜리 플라워",
-               "cabbage":"양배추" ,"pepper":"후추"} #all the words we are using
+               "cabbage":"양배추" ,"pepper":"후추"} #some words} #all the words we are using
                                                               #combines beginner, intermediate and advanced
 
-englishint = {"hi":"안녕","hello":"여보세요","My name is":"내 이름은",
-              "How are you":"잘 지냈어요", "How much":"얼마나","Good morning":"좋은 아침",
-              "Good night":"안녕히 주무세요"}#concentrationint()
-#englishbeg =
-cardstop=[Rect(x*160+40, 200, 120, 175) for x in range(8)] #top row of cards #used in concentration()
-cardsbot= [Rect(x*160+40, 475, 120, 175) for x in range(8)] #bottom row of cards #used in concentration()
+englishint = {"hi":"안녕","bye":"안녕","hello":"여보세요","My name is":"내 이름은",
+              "How are you":"잘 지냈어요", "How much?":"","Good morning":"", "Good night":""}#concentrationint()
+
+englishbeg = {"g/k":"ㄱ", "n/n":"ㄴ", "d/t":"ㄷ", "r/l":"ㄹ", "m/m":"ㅁ", "b/p":"ㅂ",
+              "s/t":"ㅅ", "-/ng":"ㅇ", "j/t":"ㅈ", "kk/k":"ㄲ", "tt/-":"ㄸ", "pp/-":"ㅃ",
+              "ss/t":"ㅆ", "jj/-":"ㅉ", "ch/t":"ㅊ", "k/k":"ㅋ", "t/t":"ㅌ",
+              "p/p":"ㅍ", "a":"ㅏ", "ae":"ㅐ", "ya":"ㅑ", "yae":"ㅒ", "eo":"ㅓ", "e":"ㅔ",
+              "yeo":"ㅕ", "ye":"ㅖ", "o":"ㅗ", "wa":"ㅘ", "wae":"ㅙ", "eo":"ㅚ", "yo":"ㅛ",
+              "u":"ㅜ", "wo":"ㅝ", "we":"ㅞ", "wi":"ㅟ", "yu":"ㅠ", "eu":"ㅡ", "ui":"ㅢ", "i":"ㅣ"}
+
+cardstop=[Rect(x*140+40, 200, 120, 175) for x in range(8)] #top row of cards #used in concentration()
+cardsbot= [Rect(x*140+40, 475, 120, 175) for x in range(8)] #bottom row of cards #used in concentration()
+card_back = image.load("card_back.jpg", (x*140+40, 200) 
 
 
 def start():
@@ -44,7 +50,7 @@ def start():
     init()
     ArialFont = font.SysFont("Arial", 40, True, False)
     buttons = [Rect(450,y*100+270,300,80) for y in range(3)]
-    vals = ["basket game","speak korean","concentration"]
+    vals = ["falling words","speak korean","concentration"]
     
     while running:
         for e in event.get():
@@ -98,7 +104,6 @@ def speakkoreanIntro():
             if r.collidepoint(mx,my):
                 draw.rect(screen,(0,255,0),r,2)
                 if mb[0]==1:
-                    time.sleep(1)
                     return c
             else:
                 draw.rect(screen,(255,255,0),r,2)
@@ -175,15 +180,10 @@ def skbeginner():
 
     #Font and word stuff
     fnt = font.Font("cyberbit.ttf",60)
-    words =["ㄱ", "ㄴ", "ㄷ", "ㄹ", "ㅁ", "ㅂ", "ㅅ",
-            "ㅇ", "ㅈ", "ㄲ", "ㄸ", "ㅃ", "ㅆ", "ㅉ",
-            "ㅊ", "ㅋ", "ㅌ", "ㅍ", "ㅏ", "ㅐ", "ㅑ",
-            "ㅒ", "ㅓ","ㅔ", "ㅕ", "ㅖ", "ㅗ", "ㅘ",
-            "ㅚ", "ㅛ", "ㅜ","ㅝ", "ㅞ", "ㅟ", "ㅠ",
-            "ㅡ", "ㅢ", "ㅣ"]
-    #definitions =["hi, bye","hello","My name is", "How are you"]
-    w = randint(0,len(words)-1) #picks the word in the list
-    txtPic = fnt.render(words[w],True,(0,0,0)) #This only picks one word and only resets when the code loops
+    words = ["안녕","여보세요","내 이름은","잘 지냈어요"]
+    definitions =["hi, bye","hello","My name is", "How are you"]
+    word = randint(0,3) #picks the word in the list
+    txtPic = fnt.render(words[word],True,(0,0,0)) #This only picks one word and only resets when the code loops
     heart = [880, 0, 0, 73]
     
     #RECTS
@@ -231,7 +231,7 @@ def skbeginner():
             string = record() #add to function if making
             spokentext = fnt.render(string, True, (0,0,0))
             screen.blit(spokentext, (400,465))
-            if string == words[w]: #word needs to be added too
+            if string == words[word]: #word needs to be added too
                 screen.blit(correct, (500, 600))
                 display.flip()
                 time.sleep(2)
@@ -262,7 +262,7 @@ def skbeginner():
             screen.blit(startRecording, (465, 442))
 
         display.flip()
-    return "sk beginner"
+    return "skbeginner"
 def skintermediate():
     
     #IMAGE LOADING
@@ -280,9 +280,9 @@ def skintermediate():
     #Font and word stuff
     fnt = font.Font("cyberbit.ttf",60)
     words = ["안녕","여보세요","내 이름은","잘 지냈어요"]
-    #definitions =["hi, bye","hello","My name is", "How are you"]
-    w = randint(0,len(words)-1) #picks the word in the list
-    txtPic = fnt.render(words[w],True,(0,0,0)) #This only picks one word and only resets when the code loops
+    definitions =["hi, bye","hello","My name is", "How are you"]
+    word = randint(0,3) #picks the word in the list
+    txtPic = fnt.render(words[word],True,(0,0,0)) #This only picks one word and only resets when the code loops
     heart = [880, 0, 0, 73]
     
     #RECTS
@@ -330,7 +330,7 @@ def skintermediate():
             string = record() #add to function if making
             spokentext = fnt.render(string, True, (0,0,0))
             screen.blit(spokentext, (400,465))
-            if string == words[w]: #word needs to be added too
+            if string == words[word]: #word needs to be added too
                 screen.blit(correct, (500, 600))
                 display.flip()
                 time.sleep(2)
@@ -362,105 +362,7 @@ def skintermediate():
 
         display.flip()
     return "sk intermediate"
-def skadvanced(korean):
-    
-    #IMAGE LOADING
-    blueArrowPic = image.load("blueArrow.png")    
-    micPic = image.load("micPic.jpg")
-    heartPic = image.load("heart.png")
-    gameOver = image.load("game over.png")
-    #FONT LOADING
-    correct = Fontt.render("Correct!", True, (0, 255, 0))
-    incorrect = Fontt.render("Incorrect!", True, (255, 0, 0))
-    Pronounce= Fontt.render("Try to pronounce this word.", True, (0,0,0))
-    startRecording = Fontt.render("^CLICK to start recording.", True, (0,0,0))
-    NoUnderstand = smallfont.render("Google Speech Recognition could not understand audio.", True, (0,0,0))
 
-    #Font and word stuff
-    fnt = font.Font("cyberbit.ttf",60)
-    words = list(korean.keys())
-    #definitions =["hi, bye","hello","My name is", "How are you"]
-    w = randint(0,len(words)-1) #picks the word in the list
-    txtPic = fnt.render(words[w],True,(0,0,0)) #This only picks one word and only resets when the code loops
-    heart = [880, 0, 0, 73]
-    
-    #RECTS
-    beginnerRect = Rect(80, 200, 500, 120)
-    micRect = Rect(530, 300, 140, 140)
-    KtxtRect = Rect(400, 150, 400, 100)
-    correctRect = Rect(500, 600, 200, 50)
-    statusRect = Rect(400, 480, 400, 80)
-    incorrectRect = Rect(500, 600, 200, 50)
-    #FILL AND BLIT
-    screen.fill((255,255,255))
-    screen.blit(Pronounce, (400, 120))
-    screen.blit(startRecording, (465, 442))
-    screen.blit(blueArrowPic, (300, 150))
-    screen.blit(micPic, (530, 300))
-    screen.blit(txtPic,(400,150))
-    screen.blit(heartPic, (880, 0))
-    screen.blit(heartPic, (960, 0))
-    screen.blit(heartPic, (1040, 0))
-    screen.blit(heartPic, (1120, 0))
-
-    recording = False
-    running = True
-    while running:
-        for evnt in event.get():          
-            if evnt.type == QUIT:
-                running = False
-                return "menu"
-            if evnt.type == MOUSEBUTTONDOWN:
-                click = True
-        if key.get_pressed()[27]:
-            running = False
-            return "menu"
-        mb = mouse.get_pressed()
-        mx, my = mouse.get_pos()
-        draw.rect(screen, (0), micRect, 2)
-        draw.rect(screen, (0), KtxtRect, 2)
-        draw.rect(screen, (0), statusRect, 2)
-        
-        if micRect.collidepoint(mx,my) and mb[0] == 1:
-            recording = True #add to function if making 
-            draw.rect(screen, (255,255,255), (465,442, 303, 30))
-            recordnotif = Fontt.render("Recording...", True, (0,0,0))
-            screen.blit(recordnotif,(465,442))
-            string = record() #add to function if making
-            spokentext = fnt.render(string, True, (0,0,0))
-            screen.blit(spokentext, (400,465))
-            if string == words[w]: #word needs to be added too
-                screen.blit(correct, (500, 600))
-                display.flip()
-                time.sleep(2)
-                draw.rect(screen, (255,255,255), incorrectRect)
-                break
-            else:
-                if heart[2] == 240: #so does heart
-                    screen.blit(gameOver, (0, 0))
-                    display.flip()
-                    time.sleep(5)
-                    return "menu"
-                else:
-                    screen.blit(incorrect, (500, 600))
-                    display.flip()
-                    time.sleep(2)
-                    draw.rect(screen, (255,255,255), statusRect)
-                    draw.rect(screen, (0,0,0), statusRect, 2)
-                    draw.rect(screen, (255,255,255), incorrectRect)
-                    heart[2]+=80
-                    draw.rect(screen, (255,255,255), heart)
-                    #b = randint(0,3)
-                    #txtPic2 = fnt.render(words[b],True,(0,0,0))
-                   # screen.blit(txtPic2,(400,150))
-                    
-        else:
-            recording = False
-            draw.rect(screen, (255,255,255), (465,442, 303, 30))
-            screen.blit(startRecording, (465, 442))
-
-        display.flip()
-    return "sk advanced"
 def concentrationint():
     
     enlist = list(englishint.keys())
@@ -601,19 +503,19 @@ def drawscene(screen,click,myClock, ewords, kwords, endict, kwordstate, ewordsta
             draw.rect(screen,(0,0,0), (topcards[i]))
             #screen.blit(correct, (550, 900))
             if len(endict[kwords[i]])> 4: #special cases for diff len strings so spacing looks good
-                txt = fnt3.render(endict[kwords[i]][:endict[kwords[i]].rfind(" ")], True, (255,255,255)) #so the text fits in the rectangle and looks pretty
-                txt2 = fnt3.render(endict[kwords[i]][endict[kwords[i]].rfind(" "):], True, (255,255,255))
-                screen.blit(txt,(i*160 +70, 240))
-                screen.blit(txt2, (i*160 + 45, 280))
+                txt = fnt3.render(endict[kwords[i]][:2], True, (255,255,255)) #so the text fits in the rectangle and looks pretty
+                txt2 = fnt3.render(endict[kwords[i]][2:], True, (255,255,255))
+                screen.blit(txt,(i*140 +70, 240))
+                screen.blit(txt2, (i*140 + 45, 280))
             elif len(endict[kwords[i]]) > 2:
                 txt = fnt2.render(endict[kwords[i]], True, (255,255,255))
-                screen.blit(txt, (i*160 +40, 250))
+                screen.blit(txt, (i*140 +40, 250))
             elif len (endict[kwords[i]]) == 1:
                 txt = fnt.render(endict[kwords[i]], True, (255,255,255))
-                screen.blit(txt, (i*160 +70, 240))
+                screen.blit(txt, (i*140 +70, 240))
             else:
                 txt = fnt.render(endict[kwords[i]], True, (255,255,255))
-                screen.blit(txt, (i*160 +40, 240))
+                screen.blit(txt, (i*140 +40, 240))
 
     for i in range(len(ewordstate)): 
         if ewordstate[i][1] == "covered":
@@ -624,16 +526,16 @@ def drawscene(screen,click,myClock, ewords, kwords, endict, kwordstate, ewordsta
             #screen.blit(correct, (550, 400))
             if len(ewords[i])>= 9:
                 txt = cfnt1.render(ewords[i], True, (255,255,255))
-                screen.blit(txt, (i*160+47, 545))
+                screen.blit(txt, (i*140+47, 545))
             elif len(ewords[i])>=7:
                 txt = cfnt2.render(ewords[i], True, (255,255,255))
-                screen.blit(txt, (i*160+47, 545))
+                screen.blit(txt, (i*140+47, 545))
             elif len(ewords[i]) ==6 :
                 txt = cfnt.render(ewords[i], True, (255,255,255))
-                screen.blit(txt, (i*160+47, 537))
+                screen.blit(txt, (i*140+47, 537))
             else:
                 txt = cfnt.render(ewords[i], True, (255,255,255))
-                screen.blit(txt, (i*160+60, 535))
+                screen.blit(txt, (i*140+60, 535))
                 
     display.flip()
 
@@ -706,7 +608,7 @@ def turn(myClock, kwords,ewords, krdict, endict, kwordstate, ewordstate, topcard
                     if kwordstate[i][1] == "covered":     
                         card1 = kwords[i]
                         kwordstate[i][1] = "uncovered" #screen should redraw at this point
-                        drawscene(screen,click,myClock,ewords,kwords, endict, kwordstate, ewordstate, cardstop, cardsbot)
+                        drawscene(screen,click,myClock,ewords,kwords, english, kwordstate, ewordstate, cardstop, cardsbot)
                         click1 = True
                         break
             
@@ -718,7 +620,7 @@ def turn(myClock, kwords,ewords, krdict, endict, kwordstate, ewordstate, topcard
                     if ewordstate[i][1] == "covered":
                         card2 = ewords[i]
                         ewordstate[i][1] = "uncovered"  #screen should redraw at this point again
-                        drawscene(screen,click,myClock, ewords,kwords,endict,kwordstate, ewordstate, cardstop, cardsbot)
+                        drawscene(screen,click,myClock, ewords,kwords,english,kwordstate, ewordstate, cardstop, cardsbot)
                         click2 = True
                         break
                 
@@ -734,15 +636,348 @@ def turn(myClock, kwords,ewords, krdict, endict, kwordstate, ewordstate, topcard
                 display.flip()
                 #print("It's me!!!!")
                 time.sleep(1)
-                drawscene(screen,click,myClock, ewords,kwords, endict, kwordstate, ewordstate, cardstop, cardsbot)
+                drawscene(screen,click,myClock, ewords,kwords, english, kwordstate, ewordstate, cardstop, cardsbot)
             else:
                 kwordstate[c1][1] = "covered" #for some reason this doesn't change to covered
                 ewordstate[c2][1] = "covered"
                 time.sleep(1)
-                drawscene(screen,click,myClock, ewords,kwords, endict, kwordstate, ewordstate, cardstop, cardsbot)
+                drawscene(screen,click,myClock, ewords,kwords, english, kwordstate, ewordstate, cardstop, cardsbot)
                 
     return "play"
     display.flip()
+
+
+#BASKET GAME TIME!!!!
+#the highscore is kept during the time the game runs. If you replay the game (press the replay button), the highscore will be kept, but if you exit out of the game, the highscore will be lost.
+highscoreList = [0]
+
+#GLOBAL RELATED LISTS FOR BASKET GAME
+listFalling_koreanCh = ["ㄱ", "ㄴ", "ㄷ", "ㄹ", "ㅁ", "ㅂ", "ㅅ", "ㅇ", "ㅈ", "ㄲ", "ㄸ", "ㅃ", "ㅆ", "ㅉ", "ㅊ", "ㅋ", "ㅌ", "ㅍ", "ㅏ", "ㅐ", "ㅑ", "ㅒ", "ㅓ", "ㅔ", "ㅕ", "ㅖ", "ㅗ", "ㅘ", "ㅙ", "ㅚ", "ㅛ", "ㅜ", "ㅝ", "ㅞ", "ㅟ", "ㅠ", "ㅡ", "ㅢ", "ㅣ"]
+listBasket_englishPh = ["g/k", "n/n", "d/t", "r/l", "m/m", "b/p", "s/t", "-/ng", "j/t", "kk/k", "tt/-", "pp/-", "ss/t", "jj/-", "ch/t", "k/k", "t/t", "p/p", "a", "ae", "ya", "yae", "eo", "e", "yeo", "ye", "o", "wa", "wae", "eo", "yo", "u", "wo", "we", "wi", "yu", "eu", "ui", "i"] 
+
+#GAMEINTRO
+#the intro page for the basket game. You only see it once.
+def gameIntro():
+##    myClock = time.Clock()
+    intro = True
+    while intro == True:
+        for n in event.get():
+            if n.type == QUIT:
+                quit()
+        mx, my = mouse.get_pos()
+        mb = mouse.get_pressed()
+        
+        chart = image.load("hangul.jpg")
+        startImage = image.load("start.jpg")
+        startImageDarker = image.load("start_dark.jpg")
+        helpIcon = image.load("help.jpg")
+        
+        screen.fill((255,255,255))
+        
+        fntMenu = font.SysFont("Comic Sans MS", 20, False, False)
+        fntMenuBigger = font.SysFont("Comic Sans MS", 25, False, False)
+        text1 = fntMenuBigger.render("This chart shows you the Korean hangul and the matching English phonetic pronunciations.",True,(0,0,0))
+        text2 = fntMenu.render("Take a good look at this chart if you want to do well!",True,(0,0,0))
+        text3 = fntMenu.render("To access this chart, click the        icon. However, each time you do this, you'll lose half of your points.",True,(0,0,0))
+
+        textWidth1 = text1.get_width()
+        textWidth2 = text2.get_width()
+        textWidth3 = text3.get_width()
+        startImageWidth = startImage.get_width()
+        startRect = Rect(600-startImageWidth//2, 720, 172, 70)
+        screen.blit(text1, (600-textWidth1//2, 10))
+        screen.blit(text2, (600-textWidth2//2, 60))
+        screen.blit(chart, (383, 110))
+        screen.blit(text3, (600-textWidth3//2, 670))
+        draw.rect(screen, (255,255,255), startRect, 2) 
+        screen.blit(startImage, (600-startImageWidth//2, 720))
+        screen.blit(helpIcon, (410, 668))
+        
+        if startRect.collidepoint(mx,my):
+            screen.blit(startImageDarker, (600-startImageWidth//2, 720))
+        if mb[0] == 1 and startRect.collidepoint(mx,my):
+            intro = False
+        display.flip()
+
+#SHOWCHART
+#shows the chart that contains the hangul characters and the matching English phonetic sounds for basket game.
+#you can access it by clicking the help button during the game, but you lose half your points in exchange. 
+def showChart():
+    intermission = True
+    while intermission == True:
+        for u in event.get():
+            if u.type == QUIT:
+                quit()
+        mx, my = mouse.get_pos()
+        mb = mouse.get_pressed()
+        screen.fill((255,255,255))
+        chart = image.load("hangul_intermission.jpg")
+        chartWidth = chart.get_width()
+        continueIcon = image.load("continueIcon.jpg")
+        continueIcon_dark = image.load("continueIcon_dark.jpg")
+        screen.blit(chart, (600-chartWidth//2, 0))
+        continueRect = Rect(1100, 350, 100, 100)
+        draw.rect(screen, (255,255,255), continueRect)
+        screen.blit(continueIcon, (1100, 350))
+        if continueRect.collidepoint(mx,my):
+            screen.blit(continueIcon_dark, (1100, 350))
+        if mb[0] == 1 and continueRect.collidepoint(mx,my):
+            intermission = False
+        display.flip()
+
+#GAMEOVER
+#the game-over page for the basket game.
+#you can exit the game (by clicking the x in the right corner), or replay the game (goes to the screen with falling Korean characters aka 'basketGame()'), or go to the main menu.
+#also shows how many points you got before you died, and underneath, the highscore. (Highscore 
+def gameOver(points, highscoreList):
+    gameOver = True 
+    while gameOver == True:
+        for b in event.get():
+            if b.type == QUIT:
+                quit()
+        mx, my = mouse.get_pos()
+        mb = mouse.get_pressed()
+        screen.fill((255,255,255))
+        
+        fntPoints = font.SysFont("Comic Sans MS", 79, False, False)
+        fntScore = font.SysFont("Comic Sans MS", 40, False, False)
+        whiteRectangle = image.load("whiteRectangle.png")
+        yellowBackground = image.load("yellowBackground.jpg")
+        screen.blit(yellowBackground, (0, 0))
+        whiteWidth = whiteRectangle.get_width
+        whiteHeight = whiteRectangle.get_height
+        screen.blit(whiteRectangle, (600-444, 400-300))
+        homeIcon = image.load("homeIcon.jpg")
+        homeRect = Rect(700, 550, 100, 100)
+        draw.rect(screen, (255,255,255), homeRect)
+        screen.blit(homeIcon, (700, 550))
+        replayIcon = image.load("replay.jpg")
+        replayRect = Rect(400, 550, 138, 100)
+        draw.rect(screen, (255,255,255), replayRect)
+        screen.blit(replayIcon, (400, 550))
+        home2 = image.load("home2.jpg")
+        replay2 = image.load("replay2.jpg")
+        
+        points_Txt = fntPoints.render("%d" %(points),True,(0,0,0))
+        pointsWidth = points_Txt.get_width()
+        screen.blit(points_Txt, (600-pointsWidth//2, 250))
+        
+        #how my highscoreList works: has a global list with '0' in it. If the current point is higher than the last item in the list, it adds to the highscoreList (globally).
+        #it blits the last item in the list after everything, aka the highscore.
+        if points > highscoreList[-1]:
+            highscoreList.append(points)
+                        
+        highScore_Txt = fntScore.render("Highscore: %d" %(highscoreList[-1]),True,(0,0,0))
+        highscoreWidth = highScore_Txt.get_width()
+        screen.blit(highScore_Txt, (600-highscoreWidth//2, 350))
+
+        if replayRect.collidepoint(mx,my):
+            screen.blit(replay2, (400, 550))
+        if homeRect.collidepoint(mx,my):
+            screen.blit(home2, (700, 550))
+        
+        if replayRect.collidepoint(mx,my) and mb[0] == 1:
+            basketGame()
+        if homeRect.collidepoint(mx,my) and mb[0] == 1:  
+            start()                                             
+            
+        display.flip()
+    return highscoreList
+                                  
+#MOVEBASKET
+#returns changed bx to move the basket left and right.
+def moveBasket(bx):
+    keys = key.get_pressed()    
+    if keys[K_LEFT] and bx >= 0:
+        bx -= 7
+    if keys[K_RIGHT] and bx < 1040:
+        bx += 7
+    return bx
+
+#DRAWINGLETTERS
+#draws the falling Korean characters.
+def drawingLetters(fallingLets,fallingY):
+    fnt = font.Font("Cyberbit.ttf", 50)
+    for i in range(6):
+        txtPic1 = fnt.render(fallingLets[i],True,(0,0,0))
+        screen.blit(txtPic1, (i*200+85, fallingY[i]))
+
+#MAKENEWLIST
+#it makes a new list of Korean characters for the second+ times it loops.
+def makeFallingList(let):
+    fallingLets = [let]
+    while len(fallingLets)<6:
+        lets = choice(listFalling_koreanCh)
+        if lets not in fallingLets:
+            fallingLets.append(lets)
+    shuffle(fallingLets)
+    return fallingLets
+
+#BASKETGAME
+#the actual basket game!
+def basketGame():
+    running=True
+    #bx is the x-coordinate of the moving basket
+    bx = 0
+    #points is the number of points the user has while playing.
+    points = 0
+    #lives is the number of lives lost.
+    lives = 0
+    listFalling_koreanCh = ["ㄱ", "ㄴ", "ㄷ", "ㄹ", "ㅁ", "ㅂ", "ㅅ", "ㅇ", "ㅈ", "ㄲ", "ㄸ", "ㅃ", "ㅆ", "ㅉ", "ㅊ", "ㅋ", "ㅌ", "ㅍ", "ㅏ", "ㅐ", "ㅑ", "ㅒ", "ㅓ", "ㅔ", "ㅕ", "ㅖ", "ㅗ", "ㅘ", "ㅙ", "ㅚ", "ㅛ", "ㅜ", "ㅝ", "ㅞ", "ㅟ", "ㅠ", "ㅡ", "ㅢ", "ㅣ"]
+    listBasket_englishPh = ["g/k", "n/n", "d/t", "r/l", "m/m", "b/p", "s/t", "-/ng", "j/t", "kk/k", "tt/-", "pp/-", "ss/t", "jj/-", "ch/t", "k/k", "t/t", "p/p", "a", "ae", "ya", "yae", "eo", "e", "yeo", "ye", "o", "wa", "wae", "eo", "yo", "u", "wo", "we", "wi", "yu", "eu", "ui", "i"] 
+    onBasket = choice(listBasket_englishPh)
+    #koIndex helps me find the related Korean phonetic for the random English word that's currently blitted on the basket.
+    KoIndex = listBasket_englishPh.index(onBasket)
+    fntBasket = font.SysFont("Comic Sans MS", 29, False, False)
+    onBasketTxt = fntBasket.render(onBasket,True,(0,0,0))
+    #fallingLets is a list of 6, containing the 6 Korean characters that fall down.
+    fallingLets = []
+    fallingLets.append(listFalling_koreanCh[KoIndex])
+    correctTxt = fntBasket.render("Correct!",True,(0,0,0))
+    incorrectTxt = fntBasket.render("Incorrect!",True,(0,0,0))
+    scoreTxt = fntBasket.render("Score: ", True, (0,0,0))
+    fnt = font.Font("Cyberbit.ttf", 50)
+    basket = image.load("basketRealReal.jpg")
+    heartPic = image.load("heart.png")
+    helpIcon = image.load("help.jpg")
+    helpIconDarker = image.load("help_dark.jpg")
+    myClock = time.Clock()
+
+    #fills up the fallingLets to its capacity of 6. Also makes sure the Korean phonetic of "onBasket" is in the list. Also makes sure there's no repeats.
+    while len(fallingLets)<6:        
+        let = choice(listFalling_koreanCh)
+        if let not in fallingLets:
+            fallingLets.append(let)
+
+    shuffle(fallingLets)
+
+    #creates random negative y-coordinates for the Korean characters to fall from.
+    fallingY = [randint(-500,0) for i in range(6)]
+
+    #credit goes to Mr. Mac (you).
+    #'heart' is a list containing the rect coordinates for a white rect.
+    #the rect increases the x-value to cover the heart-images when the wrong Korean character collides with the basket.
+    #this creates the illusion that hearts/lives are being lost.
+    heart = [800, 0, 0, 73]
+    
+    #credit goes to Noor (Nasri).
+    #taken is a list that represents the states of the falling Korean characters.
+    #later on in the function, if the related FallingLet is colliding with the basket, the False value changes to True.
+    #this helps me draw the heartRect properly, blit over the falling Korean character, etc.
+    taken = [False, False, False, False, False, False]
+
+    while running:
+        for e in event.get():
+            if e.type == QUIT:
+                running = False
+                
+        mx, my = mouse.get_pos()
+        mb = mouse.get_pressed()
+        bx = moveBasket(bx)
+
+        #you can click on the helpRect to go to the helpful chart.
+        helpRect = Rect(10, 50, 30, 30)
+        draw.rect(screen, (255,255,255), helpRect)
+        basketRect = Rect(bx, 710, 160, 90)
+            
+        screen.fill((255,255,255))
+        screen.blit(heartPic, (800, 0))
+        screen.blit(heartPic, (880, 0))
+        screen.blit(heartPic, (960, 0))
+        screen.blit(heartPic, (1040, 0))
+        screen.blit(heartPic, (1120, 0))
+        screen.blit(helpIcon, (10, 50))
+        
+        draw.rect(screen,(255,255,255),basketRect,2)
+        screen.blit(basket, (bx, 710))
+        onBasketTxt = fntBasket.render(onBasket,True,(0,0,0))
+        textWidthFirst = onBasketTxt.get_width()
+        screen.blit(onBasketTxt, ((bx+80)-textWidthFirst//2, 755))
+        drawingLetters(fallingLets, fallingY)
+
+        #calls showChart(). You lose half of your points though.        
+        if helpRect.collidepoint(mx,my):
+                screen.blit(helpIconDarker, (10, 50))
+        if mb[0] == 1 and helpRect.collidepoint(mx,my):
+           showChart()
+           points = points//2
+
+        #this is the action loop. Stuff happens here.
+        for i in range(6):
+            fallingY[i] += 2
+            getTxtSize = fnt.render(fallingLets[i], True, (0, 0, 0))
+            textWidth = getTxtSize.get_width()
+            textHeight = getTxtSize.get_height()
+            #credit to Noor
+            #if a letter[i] collides with the basket and no action has been taken on it yet,
+            if basketRect.collidepoint(i*200+85, fallingY[i]+15) and taken[i] == False: 
+                #cover up the falling Korean character
+                draw.rect(screen, (255,255,255), (i*200+85, fallingY[i], textWidth, textHeight))
+                screen.blit(basket, (bx, 710))
+                screen.blit(onBasketTxt, ((bx+80)-textWidthFirst//2, 755))
+                #credit to Mr. Mac
+                #fallingIndex is the index in the main Korean-list, of the collided fallingLet
+                fallIndex = listFalling_koreanCh.index(fallingLets[i])
+                if fallIndex == KoIndex:
+                    screen.blit(correctTxt, (100, 100))
+                    points += 100
+                else:
+                    screen.blit(incorrectTxt, (100, 100))
+                    heart[2]+=80
+                    lives += 1
+                    #if the white heart-rect has covered up all the hearts:
+                    if heart[2] == 1200:
+                        gameOver()
+                #now, some action has been taken on FallingLets[i].
+                taken[i] = True
+                #supposed to blit a white rect over the falling Letter, but doesn't work when the letter isn't colliding with the basket anymore.
+                if taken[i] == True:
+                    draw.rect(screen, (255,255,255), (i*200+85, fallingY[i], textWidth, textHeight))
+
+        
+        if lives == 5:
+            gameOver(points, highscoreList)
+                
+        if taken[0] == taken[1] == taken[2] == taken[3] == taken[4] == taken[5] == False and fallingY[0] > 800 and fallingY[1] > 800 and fallingY[2] > 800 and fallingY[3] > 800 and fallingY[4] > 800 and fallingY[5] > 800:
+            points -= 500
+            
+        if fallingY[0] > 800 and fallingY[1] > 800 and fallingY[2] > 800 and fallingY[3] > 800 and fallingY[4] > 800 and fallingY[5] > 800:
+            fallingY = [- 100 + randint(-500, 0) for i in range(6)]
+            onBasket = choice(listBasket_englishPh)
+            KoIndex = listBasket_englishPh.index(onBasket)
+            #if all the letters reach the bottom, they have to restart, and therefore they have to all turn into False
+            #to show that no event has happened to them yet.
+            taken = [False, False, False, False, False, False]
+            fallingLets = makeFallingList(listFalling_koreanCh[KoIndex])
+
+        #basically the second event loop. Stuff also happens here, but it's the repeat of the first one with different letters.                
+        for i in range(6):        
+            fallingY[i] += 2
+            getTxtSize = fnt.render(fallingLets[i], True, (0, 0, 0))
+            textWidth = getTxtSize.get_width()
+            textHeight = getTxtSize.get_height()
+            if basketRect.collidepoint(i*200+85, fallingY[i]+15):
+                draw.rect(screen, (255,255,255), (i*200+85, fallingY[i], textWidth, textHeight))
+                screen.blit(basket, (bx, 710))
+                screen.blit(onBasketTxt, ((bx+80)-textWidthFirst//2, 755))
+                fallIndex = listFalling_koreanCh.index(fallingLets[i])
+                if fallIndex == KoIndex:
+                    screen.blit(correctTxt, (100, 100))
+                    points += 100
+                else:
+                    screen.blit(incorrectTxt, (100, 100))
+                    
+        draw.rect(screen, (255,255,255), heart)
+        pointsTxt = fntBasket.render("%d" %(points),True,(0,0,0))
+        screen.blit(scoreTxt, (0, 0))
+        screen.blit(pointsTxt, (100, 0))
+
+        myClock.tick(60)    
+        display.flip()
+        
+##gameIntro()
+##basketGame()
+
 
 page = "menu"
 while page != "exit":
@@ -765,11 +1000,13 @@ while page != "exit":
     if page == "sk intermediate":
         page = skintermediate()
     if page == "sk advanced":
-        page = skadvanced(korean)
+        page = skadvanced()
     if page == "concentration":
         page = concentration()
-    
-    
+    if page == "basket game":
+        page = gameIntro()
+        if intro == False:
+            page = basketGame()
 
 quit()
     
