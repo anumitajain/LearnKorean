@@ -6,6 +6,7 @@ import time
 #Setting fonts
 font.init()
 init()
+##myClock = time.Clock()
 Fontt = font.SysFont("Comic Sans MS", 20, False, False)
 smallfont = font.SysFont("Comic Sans MS", 15, False, False)
 #SCREEN
@@ -639,9 +640,8 @@ def turn(myClock, kwords,ewords, krdict, endict, kwordstate, ewordstate, topcard
     return "play"
     display.flip()
 
-font.init()
-init()
-screen = display.set_mode((1200, 800))
+
+#BASKET GAME TIME!!!!
 #the highscore is kept during the time the game runs. If you replay the game (press the replay button), the highscore will be kept, but if you exit out of the game, the highscore will be lost.
 highscoreList = [0]
 
@@ -652,7 +652,7 @@ listBasket_englishPh = ["g/k", "n/n", "d/t", "r/l", "m/m", "b/p", "s/t", "-/ng",
 #GAMEINTRO
 #the intro page for the basket game. You only see it once.
 def gameIntro():
-    myClock = time.Clock()
+##    myClock = time.Clock()
     intro = True
     while intro == True:
         for n in event.get():
@@ -969,8 +969,8 @@ def basketGame():
         myClock.tick(60)    
         display.flip()
         
-gameIntro()
-basketGame()
+##gameIntro()
+##basketGame()
 
 
 page = "menu"
@@ -999,7 +999,8 @@ while page != "exit":
         page = concentration()
     if page == "basket game":
         page = gameIntro()
-        page = basketGame()
+        if intro == False:
+            page = basketGame()
 
 quit()
     
