@@ -204,8 +204,8 @@ def concentrationadv():
     
     enlist = list(englishadv.keys())
     shuffle(enlist)
-    kwords = list(enlist[:8])  #actually english words
-    ewords = list(enlist[:8])
+    kwords = list(enlist[:7])  #actually english words
+    ewords = list(enlist[:7])
     shuffle(kwords)#must shuffle outside loop so words don't keep flashing
 
     kwordstate =[] #records all the word states.
@@ -293,11 +293,13 @@ def drawscene(screen,click,ewords, kwords, endict, kwordstate, ewordstate,topcar
     fnt = font.Font("cyberbit.ttf",60)
     fnt2 = font.Font("cyberbit.ttf",40)
     fnt3 = font.Font("cyberbit.ttf",30)
+    card_back = image.load("card_back.jpg")
 
     redo = image.load("undo.png")
     redo = transform.scale(redo, (50,50))
+    redoWidth = redo.get_width()
     
-    replayRect = Rect(500,695,50,50)
+    replayRect = Rect(600-redoWidth//2,695,50,50)
     
     
     mb = mouse.get_pressed()
@@ -306,10 +308,13 @@ def drawscene(screen,click,ewords, kwords, endict, kwordstate, ewordstate,topcar
     
     title= ArialFont.render("Concentration", True, (100,100, 100))
     screen.blit(title, (160, 9))
-    clicktxt = cfnt.render(str(click), True, (0, 0, 0))
-    screen.blit(clicktxt, (400, 685))
+    attempts_text = cfnt2.render("Attempts: ", True, (0,0,0))
+    screen.blit(attempts_text, (300, 695))
+    clicktxt = cfnt.render(str(click), True, (0,0,0))
+    screen.blit(clicktxt, (440, 695))
     draw.rect(screen, (255,255,255), replayRect)
-    screen.blit(redo, (500,695))
+##    screen.blit(redo, (500,695))
+    screen.blit(redo, (600-redoWidth//2, 695)) 
 
     #Attempt to integrate clock that timed user to determine best score
 ##    print(myClock)
@@ -327,9 +332,10 @@ def drawscene(screen,click,ewords, kwords, endict, kwordstate, ewordstate,topcar
         if kwordstate[i][1] == "covered":
             #print(topcards[i])
             draw.rect(screen,(0,0,0), (topcards[i]))
+            screen.blit(card_back, (topcards[i].x, topcards[i].y))
             #w += 1 #means user hasn't won yet
         else:
-            draw.rect(screen,(0,0,0), (topcards[i]))
+            draw.rect(screen,(100,100,100), (topcards[i]))
             #screen.blit(correct, (550, 900))
             if len(endict[kwords[i]])> 4: #special cases for diff len strings so spacing looks good
                 txt = fnt3.render(endict[kwords[i]][:endict[kwords[i]].rfind(" ")], True, (255,255,255)) #so the text fits in the rectangle and looks pretty
@@ -348,9 +354,10 @@ def drawscene(screen,click,ewords, kwords, endict, kwordstate, ewordstate,topcar
 
     for i in range(len(ewordstate)): 
         if ewordstate[i][1] == "covered":
-            draw.rect(screen,(0,0,0), bottomcards[i])
+            draw.rect(screen,(100,100,100), bottomcards[i])
+            screen.blit(card_back, (bottomcards[i].x, bottomcards[i].y))
         else:
-            draw.rect(screen,(0,0,0), bottomcards[i])
+            draw.rect(screen,(100,100,100), bottomcards[i])            
             #screen.blit(correct, (550, 400))
             if len(ewords[i])>= 9:
                 txt = cfnt1.render(ewords[i], True, (255,255,255))
