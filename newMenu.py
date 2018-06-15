@@ -16,10 +16,20 @@ korean = {"사과":"apple", "오렌지":"orange","바나나":"bannana",
           "감자":"potato","토마토":"tomato","가지": "eggplant",
           "콜리 플라워":"cauliflower","양배추":"cabbage","후추":"pepper"} #used in concentration()
 
-english = {"apple":"사과","orange":"오렌지","bannana":"바나나", "pear":"배",
+englishadv = {"apple":"사과","orange":"오렌지","bannana":"바나나", "pear":"배",
                "grape":"포도","watermelon":"수박", "potato":"감자",
                "tomato":"토마토","eggplant":"가지", "cauliflower":"콜리 플라워",
-               "cabbage":"양배추" ,"pepper":"후추"} #used in concentration()
+               "cabbage":"양배추" ,"pepper":"후추"} #used in concentrationadv() 
+
+englishult = {"apple":"사과","orange":"오렌지","bannana":"바나나", "pear":"배",
+               "grape":"포도","watermelon":"수박", "potato":"감자",
+               "tomato":"토마토","eggplant":"가지", "cauliflower":"콜리 플라워",
+               "cabbage":"양배추" ,"pepper":"후추", some words} #all the words we are using
+                                                              #combines beginner, intermediate and advanced
+
+englishint = {"hi":"안녕","bye":"안녕","hello":"여보세요","My name is":"내 이름은",
+              "How are you":"잘 지냈어요", "How much?":"","Good morning":"", "Good night":""}#concentrationint()
+englishbeg =
 cardstop=[Rect(x*140+40, 200, 120, 175) for x in range(8)] #top row of cards #used in concentration()
 cardsbot= [Rect(x*140+40, 475, 120, 175) for x in range(8)] #bottom row of cards #used in concentration()
 
@@ -119,7 +129,7 @@ def concentrationIntro():
             if r.collidepoint(mx,my):
                 draw.rect(screen,(0,255,0),r,2)
                 if mb[0]==1:
-                    time.sleep (1)
+                    time.sleep (1) #so user doesn't pick card when picking mode
                     return c
             else:
                 draw.rect(screen,(255,255,0),r,2)
@@ -346,7 +356,7 @@ def skintermediate():
 
 def concentrationint():
     
-    enlist = list(english.keys())
+    enlist = list(englishint.keys())
     shuffle(enlist)
     kwords = list(enlist[:8])  #actually english words
     ewords = list(enlist[:8])
@@ -371,14 +381,16 @@ def concentrationint():
             if e.type == QUIT:
                 running = False
                 return "menu"
-        if key.get_pressed()[27]: running = False
+        if key.get_pressed()[27]:
+            running = False
+            return "menu"
 
         mb = mouse.get_pressed()
         mx, my = mouse.get_pos()        
         myClock = time.clock()
         print(myClock)
-        drawscene(screen,click,myClock, ewords, kwords, english, kwordstate, ewordstate, cardstop, cardsbot)
-        ret = turn(myClock,kwords, ewords, korean, english,kwordstate,ewordstate, cardstop, cardsbot)
+        drawscene(screen,click,myClock, ewords, kwords, englishint, kwordstate, ewordstate, cardstop, cardsbot)
+        ret = turn(myClock,kwords, ewords, koreanint, englishint,kwordstate,ewordstate, cardstop, cardsbot)
         if ret != "play":
             return ret
         else:
@@ -393,7 +405,47 @@ def concentrationint():
 ##                return "concentration"
     #display.flip()
     #return "menu"
+def concentrationadv():
+    
+    enlist = list(englishadv.keys())
+    shuffle(enlist)
+    kwords = list(enlist[:8])  #actually english words
+    ewords = list(enlist[:8])
+    shuffle(kwords)#must shuffle outside loop so words don't keep flashing
 
+    kwordstate =[] #records all the word states.
+                   #Will only be used when changing the state
+    ewordstate = []
+
+    for i in range(len(ewords)): #one loop for 4 lists because they all have the same length
+        ewordstate.append([ewords[i],"covered"]) #because every word starts off covered
+        kwordstate.append([kwords[i],"covered"]) #same list as ewordstate
+       
+    print(kwordstate)
+    print(ewordstate)
+    replayRect = Rect(1100,700,95,95)
+    running=True
+    click = 0
+    
+    while running:
+        for e in event.get():
+            if e.type == QUIT:
+                running = False
+                return "menu"
+        if key.get_pressed()[27]:
+            running = False
+            return "menu"
+
+        mb = mouse.get_pressed()
+        mx, my = mouse.get_pos()        
+        myClock = time.clock()
+        print(myClock)
+        drawscene(screen,click,myClock, ewords, kwords, englishadv, kwordstate, ewordstate, cardstop, cardsbot)
+        ret = turn(myClock,kwords, ewords, koreanint, englishadv,kwordstate,ewordstate, cardstop, cardsbot)
+        if ret != "play":
+            return ret
+        else:
+            return "c advanced" 
     
 def drawscene(screen,click,myClock, ewords, kwords, endict, kwordstate, ewordstate,topcards, bottomcards):  #draws everything
     font.init()
