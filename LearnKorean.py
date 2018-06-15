@@ -45,7 +45,7 @@ englishbeg = {"g/k":"ㄱ", "n/n":"ㄴ", "d/t":"ㄷ", "r/l":"ㄹ", "m/m":"ㅁ", "
               "u":"ㅜ", "wo":"ㅝ", "we":"ㅞ", "wi":"ㅟ", "yu":"ㅠ", "eu":"ㅡ", "ui":"ㅢ", "i":"ㅣ"}
 cardstop=[Rect(x*140+40, 200, 120, 175) for x in range(8)] #top row of cards #used in concentration()
 cardsbot= [Rect(x*140+40, 475, 120, 175) for x in range(8)] #bottom row of cards #used in concentration()
-
+mode = "menu" #for turn()
 
 def start(): #main menu
              #All menu code and formatting adapted from Mr.Mckenzie's menu example
@@ -186,6 +186,7 @@ def concentrationbeg(): #function for beginner level concentration
     replayRect = Rect(1100,700,95,95) 
     running=True
     c = 0 #counts number of times user tries to make a pair
+    mode = "c beginner"
     
     while running:
         for e in event.get():
@@ -202,7 +203,7 @@ def concentrationbeg(): #function for beginner level concentration
         #myClock = time.clock()
         #print(myClock)
         drawscene(screen,c,ewords, kwords, englishbeg, kwordstate, ewordstate, cardstop, cardsbot)
-        ret = turn(kwords, ewords,englishbeg,kwordstate,ewordstate, cardstop, cardsbot)
+        ret = turn(kwords, ewords,englishbeg,kwordstate,ewordstate, cardstop, cardsbot, mode)
         if ret != "play":
             return ret
         else:
@@ -226,6 +227,7 @@ def concentrationint(): #intermediate level. Contains basic words and phrases
     replayRect = Rect(1100,700,95,95)
     running=True
     c= 0
+    mode = "c intermediate"
     
     while running:
         for e in event.get():
@@ -241,7 +243,7 @@ def concentrationint(): #intermediate level. Contains basic words and phrases
 ##        myClock = time.clock()
 ##        print(myClock)
         drawscene(screen,c, ewords, kwords, englishint, kwordstate, ewordstate, cardstop, cardsbot)
-        ret = turn(kwords, ewords, englishint,kwordstate,ewordstate, cardstop, cardsbot)
+        ret = turn(kwords, ewords, englishint,kwordstate,ewordstate, cardstop, cardsbot, mode)
         if ret != "play":
             return ret #so it recognizes when function quit and to return to menu or restart
         else:
@@ -269,6 +271,7 @@ def concentrationadv(): #advanced version. Fruits and vegetables
     replayRect = Rect(1100,700,95,95)
     running=True
     c = 0
+    mode = "c advanced"
     
     while running:
         for e in event.get():
@@ -284,7 +287,7 @@ def concentrationadv(): #advanced version. Fruits and vegetables
         myClock = time.clock()
         print(myClock)
         drawscene(screen,c, ewords, kwords, englishadv, kwordstate, ewordstate, cardstop, cardsbot)
-        ret = turn(kwords, ewords, englishadv,kwordstate,ewordstate, cardstop, cardsbot)
+        ret = turn(kwords, ewords, englishadv,kwordstate,ewordstate, cardstop, cardsbot, mode)
         if ret != "play":
             return ret
         else:
@@ -309,6 +312,7 @@ def concentrationult(): #ultimate version. Has words from all the other versions
     replayRect = Rect(1100,700,95,95)
     running=True
     c = 0
+    mode = "c ultimate"
     
     while running:
         for e in event.get():
@@ -325,7 +329,7 @@ def concentrationult(): #ultimate version. Has words from all the other versions
         #myClock = time.clock()
         #print(myClock)
         drawscene(screen,c, ewords, kwords, englishult, kwordstate, ewordstate, cardstop, cardsbot)
-        ret = turn(kwords, ewords, englishult,kwordstate,ewordstate, cardstop, cardsbot)
+        ret = turn(kwords, ewords, englishult,kwordstate,ewordstate, cardstop, cardsbot, mode)
         if ret != "play":
             return ret
         else:
@@ -374,13 +378,13 @@ def drawscene(screen,c,ewords, kwords, endict, kwordstate, ewordstate,topcards, 
 ##    screen.blit(sectxt, (508,685)) 
     for i in range(len(kwordstate)):
         if kwordstate[i][1] == "covered":
-            draw.rect(screen,(0,0,0), (topcards[i]))
+            draw.rect(screen,(0,0,0), (topcards[i])) #blits blank rect if card is supposed to be covered
             #w += 1 #means user hasn't won yet
         else:
             draw.rect(screen,(0,0,0), (topcards[i]))
             #screen.blit(correct, (550, 900))
             if len(endict[kwords[i]])> 4: #special cases for diff len strings so spacing looks good
-                txt = fnt3.render(endict[kwords[i]][:endict[kwords[i]].rfind(" ")], True, (255,255,255)) #so the text fits in the rectangle and looks pretty
+                txt = fnt3.render(endict[kwords[i]][:endict[kwords[i]].rfind(" ")], True, (255,255,255)) #so long txt with spaces fits in the rectangle and looks pretty
                 txt2 = fnt3.render(endict[kwords[i]][endict[kwords[i]].rfind(" "):], True, (255,255,255))
                 screen.blit(txt,(i*140 +70, 240))
                 screen.blit(txt2, (i*140 + 45, 280))
@@ -400,7 +404,7 @@ def drawscene(screen,c,ewords, kwords, endict, kwordstate, ewordstate,topcards, 
         else:
             draw.rect(screen,(0,0,0), bottomcards[i])
             #screen.blit(correct, (550, 400))
-            if len(ewords[i])>= 9:
+            if len(ewords[i])>= 9: #so string spacing looks nice
                 txt = cfnt1.render(ewords[i], True, (255,255,255))
                 screen.blit(txt, (i*140+47, 545))
             elif len(ewords[i])>=7:
@@ -416,9 +420,9 @@ def drawscene(screen,c,ewords, kwords, endict, kwordstate, ewordstate,topcards, 
     display.flip()
 
     
-def turn(kwords,ewords, endict, kwordstate, ewordstate, topcards, bottomcards):
+def turn(kwords,ewords, endict, kwordstate, ewordstate, topcards, bottomcards, mode):
     click1= False #checks if user has picked first card
-    click2 = False
+    click2 = False #checks if user has picked second card
     running=True
     c1 = 0 #card place top
     c2 = 0 #card place bottom
@@ -427,7 +431,7 @@ def turn(kwords,ewords, endict, kwordstate, ewordstate, topcards, bottomcards):
     correct = cfnt.render("Correct!", True, (0, 255, 0))
     incorrect = cfnt.render("Incorrect!", True, (255, 0, 0))
     replayRect = Rect(500,695,50,50)
-    click = 0
+    c = 0
 
     #Stll trying to add Clock
     #myClock2 = time.clock()
@@ -444,8 +448,8 @@ def turn(kwords,ewords, endict, kwordstate, ewordstate, topcards, bottomcards):
             if key.get_pressed()[27]:  #esc key
                 running = False
                 return "menu"
-            if key.get_pressed()[K_SPACE]:  #Replays game
-                return "c intermediate"
+            if key.get_pressed()[K_SPACE]:  #Replays/restarts game by pressing space bar
+                return mode #so function returns mode according to which concentration level called it
             
         mb = mouse.get_pressed()
         mx, my = mouse.get_pos()
@@ -466,56 +470,57 @@ def turn(kwords,ewords, endict, kwordstate, ewordstate, topcards, bottomcards):
 
 
         if replayRect.collidepoint(mx,my) and mb[0]==1:
-            return "c intermediate"
+            return mode #replays game by clicking on it
         
         if click1 == False: #so user can only select one top card at a time
             for i in range(len(topcards)):
-                c1 = i #will count how many times it loops before it breaks
+                c1 = i #will store the value of i which satisfies our condition for parts not in the loop
                 if topcards[i].collidepoint(mx,my) and mb[0] == 1:
-                    click +=1
+                    c +=1
                     if kwordstate[i][1] == "covered":     
                         card1 = kwords[i]
                         kwordstate[i][1] = "uncovered" #screen should redraw at this point
-                        drawscene(screen,click,ewords,kwords, endict, kwordstate, ewordstate, cardstop, cardsbot)
+                        drawscene(screen,c,ewords,kwords, endict, kwordstate, ewordstate, cardstop, cardsbot)
                         click1 = True
                         break
             
            
         if click1== True: #so user can only select second card after first card has been selected
             for i in range(len(bottomcards)):
-                c2 = i #will count how many times it loops before it breaks
+                c2 = i #will store the value of i which satisfies our condition for parts not in the loop
                 if bottomcards[i].collidepoint(mx,my) and mb[0] == 1:
                     if ewordstate[i][1] == "covered":
                         card2 = ewords[i]
                         ewordstate[i][1] = "uncovered"  #screen should redraw at this point again
-                        drawscene(screen,click,ewords,kwords,endict,kwordstate, ewordstate, cardstop, cardsbot)
+                        drawscene(screen,c,ewords,kwords,endict,kwordstate, ewordstate, cardstop, cardsbot)
                         click2 = True
                         break
                 
         #print(clickone, click2)                
         if click1==True and click2 == True:
-            click1 = False #so new turn runs smoothly
+            click1 = False #so new turn runs smoothly, reset to beginning values
             click2 = False#
             print(card1,card2)
-            if str(card1) == str(card2):
-                kwordstate[c1][1] = "solved" #for some reason this changes kwordstate[7][1] to solved instead of [c1-1][1]
-                ewordstate[c2][1] = "solved" #screen should redraw here too
+            if str(card1) == str(card2): #can be analyzed because both strings are in english
+                kwordstate[c1][1] = "solved" 
+                ewordstate[c2][1] = "solved" 
                 screen.blit(correct, (500, 400))
-                display.flip()
+                display.flip() #so correct is blitted imediately 
                 #print("It's me!!!!")
-                time.sleep(1)
-                drawscene(screen,click,ewords,kwords, endict, kwordstate, ewordstate, cardstop, cardsbot)
+                time.sleep(1)#so correct is displayed for 1 second before drawscreen draws over it
+                drawscene(screen,c,ewords,kwords, endict, kwordstate, ewordstate, cardstop, cardsbot)#screen redraws here because user did something
             else:
-                kwordstate[c1][1] = "covered" #for some reason this doesn't change to covered
+                kwordstate[c1][1] = "covered" 
                 ewordstate[c2][1] = "covered"
-                time.sleep(1)
-                drawscene(screen,click,ewords,kwords, endict, kwordstate, ewordstate, cardstop, cardsbot)
+                time.sleep(1) #so user sees the cards for a second before they are turned over
+                drawscene(screen,c,ewords,kwords, endict, kwordstate, ewordstate, cardstop, cardsbot)
                 
     return "play"
     display.flip()
 
 
-def record():
+def record(): #Taken off internet when searching for speech to text API
+    #Barely editted. Aaron Li and Austin Teshuba helped us set this up suring Massey Hacks
     r = sr.Recognizer()
     with sr.Microphone() as source:
         display.flip()
@@ -525,16 +530,16 @@ def record():
         # for testing purposes, we're just using the default API key
         # to use another API key, use `r.recognize_google(audio, key="GOOGLE_SPEECH_RECOGNITION_API_KEY")`
         # instead of `r.recognize_google(audio)`
-        string = r.recognize_google(audio, language = "ko").lower()
+        string = r.recognize_google(audio, language = "ko").lower() #we changed the language of the API
         #print(type(splitData))
         #string = " ".join(splitData)
         return string
     except sr.UnknownValueError:
         print("Google Speech Recognition could not understand audio")
-    except sr.RequestError as e:  #What is e?
+    except sr.RequestError as e:  
         print("Could not request results from Google Speech Recognition service; {0}".format(e))
 
-def skbeginner():
+def skbeginner(): #beginner speak korean
     
     #IMAGE LOADING
     blueArrowPic = image.load("blueArrow.png")    
@@ -556,10 +561,10 @@ def skbeginner():
             "ㅒ", "ㅓ","ㅔ", "ㅕ", "ㅖ", "ㅗ", "ㅘ",
             "ㅚ", "ㅛ", "ㅜ","ㅝ", "ㅞ", "ㅟ", "ㅠ",
             "ㅡ", "ㅢ", "ㅣ"]
-    #definitions =["hi, bye","hello","My name is", "How are you"]
+    #definitions =["hi, bye","hello","My name is", "How are you"] #would have been relevant if hover definition and phonetic box would have been made
     w = randint(0,len(words)-1) #picks the word in the list
     txtPic = fnt.render(words[w],True,(0,0,0)) #This only picks one word and only resets when the code loops
-    heart = [880, 0, 0, 73]
+    heart = [880, 0, 0, 73] #white rectangle that covers hearts as player losses them
     
     #RECTS
     beginnerRect = Rect(80, 200, 500, 120)
@@ -567,7 +572,7 @@ def skbeginner():
     KtxtRect = Rect(400, 150, 400, 100)
     correctRect = Rect(500, 600, 200, 50)
     statusRect = Rect(400, 480, 400, 80)
-    incorrectRect = Rect(500, 600, 200, 50)
+    incorrectRect = Rect(500, 600, 300, 50)
     #FILL AND BLIT
     screen.fill((255,255,255))
     screen.blit(Pronounce, (400, 120))
@@ -599,14 +604,14 @@ def skbeginner():
         draw.rect(screen, (0), statusRect, 2)
         
         if micRect.collidepoint(mx,my) and mb[0] == 1:
-            recording = True #add to function if making 
+            recording = True 
             draw.rect(screen, (255,255,255), (465,442, 303, 30))
             recordnotif = Fontt.render("Recording...", True, (0,0,0))
             screen.blit(recordnotif,(465,442))
-            string = record() #add to function if making
+            string = record() 
             spokentext = fnt.render(string, True, (0,0,0))
             screen.blit(spokentext, (400,465))
-            if string == words[w]: #word needs to be added too
+            if string == words[w]: #checks if microphone input matches word on screen
                 screen.blit(correct, (500, 600))
                 display.flip()
                 time.sleep(2)
@@ -637,8 +642,8 @@ def skbeginner():
             screen.blit(startRecording, (465, 442))
 
         display.flip()
-    return "sk beginner"
-def skintermediate():
+    return "sk beginner" #so program keeps running until it is quit or lost
+def skintermediate(): #same as skbeginner with different words and variable inputs
     
     #IMAGE LOADING
     blueArrowPic = image.load("blueArrow.png")    
@@ -698,21 +703,21 @@ def skintermediate():
         draw.rect(screen, (0), statusRect, 2)
         
         if micRect.collidepoint(mx,my) and mb[0] == 1:
-            recording = True #add to function if making 
+            recording = True 
             draw.rect(screen, (255,255,255), (465,442, 303, 30))
             recordnotif = Fontt.render("Recording...", True, (0,0,0))
             screen.blit(recordnotif,(465,442))
-            string = record() #add to function if making
+            string = record() 
             spokentext = fnt.render(string, True, (0,0,0))
             screen.blit(spokentext, (400,465))
-            if string == words[w]: #word needs to be added too
+            if string == words[w]: 
                 screen.blit(correct, (500, 600))
                 display.flip()
                 time.sleep(2)
                 draw.rect(screen, (255,255,255), incorrectRect)
                 break
             else:
-                if heart[2] == 240: #so does heart
+                if heart[2] == 240: #means all hearts have been lost
                     screen.blit(gameOver, (0, 0))
                     display.flip()
                     time.sleep(5)
@@ -726,6 +731,8 @@ def skintermediate():
                     draw.rect(screen, (255,255,255), incorrectRect)
                     heart[2]+=80
                     draw.rect(screen, (255,255,255), heart)
+                    
+                    #Part of the attempt to change question after getting it incorrect
                     #b = randint(0,3)
                     #txtPic2 = fnt.render(words[b],True,(0,0,0))
                    # screen.blit(txtPic2,(400,150))
@@ -737,7 +744,8 @@ def skintermediate():
 
         display.flip()
     return "sk intermediate"
-def skadvanced(krdict):
+def skadvanced(krdict): #same as skbeginner with different words
+                        #used korean word dictionary to not have to recreate the list manually
     
     #IMAGE LOADING
     blueArrowPic = image.load("blueArrow.png")    
@@ -797,21 +805,21 @@ def skadvanced(krdict):
         draw.rect(screen, (0), statusRect, 2)
         
         if micRect.collidepoint(mx,my) and mb[0] == 1:
-            recording = True #add to function if making 
+            recording = True 
             draw.rect(screen, (255,255,255), (465,442, 303, 30))
             recordnotif = Fontt.render("Recording...", True, (0,0,0))
             screen.blit(recordnotif,(465,442))
-            string = record() #add to function if making
+            string = record() 
             spokentext = fnt.render(string, True, (0,0,0))
             screen.blit(spokentext, (400,465))
-            if string == words[w]: #word needs to be added too
+            if string == words[w]: 
                 screen.blit(correct, (500, 600))
                 display.flip()
                 time.sleep(2)
                 draw.rect(screen, (255,255,255), incorrectRect)
                 break
             else:
-                if heart[2] == 240: #so does heart
+                if heart[2] == 240: ##means all hearts have been lost
                     screen.blit(gameOver, (0, 0))
                     display.flip()
                     time.sleep(5)
@@ -1112,8 +1120,10 @@ def skadvanced(krdict):
 ##    return "play"
 ##    display.flip()
 
-#BASKET GAME TIME!!!!
-#the highscore is kept during the time the game runs. If you replay the game (press the replay button), the highscore will be kept, but if you exit out of the game, the highscore will be lost.
+#BASKET GAME 
+#the highscore is kept during the time the game runs.
+#If you replay the game (press the replay button), the highscore will be kept,
+#but if you exit out of the game, the highscore will be lost.
 highscoreList = [0]
 
 #GLOBAL RELATED LISTS FOR BASKET GAME
@@ -1123,13 +1133,17 @@ listBasket_englishPh = ["g/k", "n/n", "d/t", "r/l", "m/m", "b/p", "s/t", "-/ng",
 #GAMEINTRO
 #the intro page for the basket game. You only see it once.
 def gameIntro():
-##    myClock = time.Clock()
+    myClock = time.clock()
     intro = True
     while intro == True:
         for n in event.get():
             if n.type == QUIT:
-                #quit()
                 intro = False
+                return "menu"
+            if key.get_pressed()[27]:  #esc key
+                running = False
+                return "menu"
+            
         mx, my = mouse.get_pos()
         mb = mouse.get_pressed()
         
@@ -1163,6 +1177,7 @@ def gameIntro():
             screen.blit(startImageDarker, (600-startImageWidth//2, 720))
         if mb[0] == 1 and startRect.collidepoint(mx,my):
             return "play basket"
+        #return "intro"
         display.flip()
 
 #SHOWCHART
@@ -1174,6 +1189,7 @@ def showChart():
         for u in event.get():
             if u.type == QUIT:
                 intermission = False
+                
                 #quit()
         mx, my = mouse.get_pos()
         mb = mouse.get_pressed()
@@ -1203,6 +1219,7 @@ def gameOver(points, highscoreList):
             if b.type == QUIT:
                 #quit()
                 gameOver = False
+                return "menu"
         mx, my = mouse.get_pos()
         mb = mouse.get_pressed()
         screen.fill((255,255,255))
@@ -1338,6 +1355,7 @@ def basketGame():
         for e in event.get():
             if e.type == QUIT:
                 running = False
+                return "menu"
                 
         mx, my = mouse.get_pos()
         mb = mouse.get_pressed()
